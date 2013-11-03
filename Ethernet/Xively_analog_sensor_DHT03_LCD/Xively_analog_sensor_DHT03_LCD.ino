@@ -1,68 +1,33 @@
-/*TODO: 20131031 - LED2 was used in the original sketch for testing purposes of the LCD backlight.
-Find out which pin the LCD backlight switch is and update the backlightFlash() function.  Set up
-the LCD screen w/ resistors and make sure everything goes to the Arduino right.
-*/
-
-// Ethernet Shield uses pins 2, 3, 10-13
-
 #include <SPI.h>
-#include <Ethernet.h>
+#include <Ethernet.h> //Uses pins 2, 3, 10-13 for connection
 #include <HttpClient.h>
 #include <Xively.h>
 #include <DHT.h>
-#include <SoftwareSerial.h>
+#include <LiquidCrystal.h>
 
-// Declare sensor and LED pins
+/********** SENSOR **********/
+// Analog pin which we're monitoring;
 int sensorPin = 4;
-int ledPin = 5;
-
-// LCD STUFF************************************
-const int TxPin = 1;
-const int lineDelay = 500; // Time b/t first line sent to LC and second line
-const int clearDelay = 2000; // Time after a message is written before it is cleared
-const int backLight = A5; // LCD backlight
-int ledState = LOW; // Set LED low
-long previousMillis = 0; // Will store last time LED was updated
-long interval = 1000;
-
-// Variables for LED fade
-int LEDFadeValue = 0;
-unsigned long fadeTime = 0;
-int x = 0;
-int y = 0;
-
-// Variables for Backlight Flash
-unsigned long bFTime = 0;
-int bF = 1;
-int flashCounter = 0;
-int flashCount = 11; // Number of times backlight flashed b/t messages
-int nextMesDelay = 300; // Time after clear a message before flash the backlisht
-int messageVar = 0;
-
-// Variables for LCD message write
-int displayCount = 1;
-
-// MESSAGES TO DISPLAY ON LCD
-char* displayText[][2]={
-    {"TEMP/HUMIDITY"},
-    {"EAST FELICIANA"},
-    {"JACKSON"},
-    {"LOUISIANA"}
-};
-
-unsigned long LCDTime = 0;
-int NumMessages = 0;
-
-SoftwareSerial mySerial = SoftwareSerial(255, TxPin);
-
-// LCD STUFF END *******************************
 
 // Define the specific model of DHT03 per DHT.h
 #define DHTTYPE DHT22
 
-// Initialize DHT function
+// Initialize DHT object
 DHT dht(sensorPin, DHTTYPE);
 
+/********** LED STATUS **********/
+// LED status
+int ledPin = 0;
+
+/********** LCD DISPLAY **********/
+// LCD Display object
+LiquidCrystal lcd(A0, 5, 6, 7, 8, 9); //TODO: NEED TO CHANGE THESE PINS; CONFLICT WITH ETHERNET
+
+// Pins {VSS, VDD, VO,      RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K}
+// Pins {Grd, Vcc, 10k pot,  4, Gnd, 5, NA, NA, NA, NA,  6,  7,  8,  9, Vcc, Grd}
+// 10k pot uses ground-to-ground and wiper-to VO pin on LCD shield
+
+/********** ETHERNET **********/
 // MAC address for your Ethernet shield
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
@@ -91,36 +56,24 @@ XivelyClient xivelyclient(client);
 void setup() {
     
     Serial.begin(9600);
-
+    lcd.begin(16, 2);
+    
     // Pin setup
     pinMode(sensorPin, INPUT);
     pinMode(ledPin, OUTPUT);
-    pinMode(TxPin, OUTPUT); // LCD stuff????
-    digitalWrite(TxPin, HIGH); // LCD stuff???
     
-    mySerial.write(12); // Clear
-    mySerial.write(17); // Turn backlight on
-    mySerial.write(22); // Turn backlight on
-    delay(5); // Required delay
-    
-    // Print to LCD
-    mySerial.print(" BOOTING UP... "); 
-    delay(3000); // Wait 3 seconds
-    mySerial.write(13); // Form feed 
-    mySerial.print(" Version 1.0 "); // Second line // 
-    delay(3000); 
-    mySerial.write(12); // Clear
-    fadeTime = millis(); 
-    flashCounter = 0; 
-    displayCount = 1; 
-    NumMessages = sizeof(displayText)/sizeof(displayText[0]); 
-
-    // Print to serial
-    Serial.println("Starting single datastream upload to Xively...");
+    // Print status
+    lcd.clear();
+    lcd.print("Connecting...");
+    Serial.println("Starting datastream upload to Xively...");
     Serial.println();
 
     while (Ethernet.begin(mac) != 1)
     {
+        // Print connection error message
+        lcd.print("Connection error");
+        lcd.setCursor(0, 1);
+        lcd.print("Retrying...");
         Serial.println("Error getting IP address via DHCP, trying again...");
         delay(10000);
     }
@@ -131,15 +84,16 @@ void setup() {
 
 void loop() {
     
-    ledFade(); if(flashCounter == flashCount) LCDMessage(); // If we've finished Flashing, send the next message to the LCD backlightFlash();
+    // Reset status LED and LCD display
+    digitalWrite(ledPin, LOW);
+    lcd.clear();
     
-    // Reading temperature or humidity takes about 250 ms
-    // Sensor readings may also be up to 2 seconds old
+    // Read sensor, may take about 250 ms
     float h = dht.readHumidity();
     float c = dht.readTemperature();
     // Convert to Farenheit
     float t = (c * 9 / 5) + 32;
-    // Pass the readings on to array to send to Xively
+    // Pass the readings on to array to print and send to Xively
     datastreams[0].setFloat(t);
     datastreams[1].setFloat(h);
     
@@ -150,21 +104,35 @@ void loop() {
     Serial.print("Temperature: ");
     Serial.print(datastreams[1].getFloat());
     Serial.println(" *F");
-
+    
     // Send value to Xively
     Serial.println("Uploading it to Xively...");
     int ret = xivelyclient.put(feed, xivelyKey);
     
-    // If uploaded to Xively, tuen on status LED
-    if (ret) {
-        digitalWrite(ledPin, HIGH);
-        delay(1000);
+    // If uploaded to Xively, turn on status LED and print to LCD
+    if (!ret) {
+        digitalWrite(ledPin, LOW);
+        lcd.print("Upload error!");
     }
     else {
-        digitalWrite(ledPin, LOW);
+        digitalWrite(ledPin, HIGH);
+        lcd.print("Data uploaded!");
+        delay(1000);
     }
     
-    // Return message
+    // Print the readings to LCD
+    lcd.clear();
+    lcd.print("H: ");
+    //int hum = round(datastreams[1].getFloat());
+    lcd.print(datastreams[1].getFloat());
+    lcd.print("%");
+    lcd.setCursor(0, 1);
+    lcd.print("T: ");
+    //int temp = round(datastreams[0].getFloat());
+    lcd.print(datastreams[0].getFloat());
+    lcd.print("*F");
+    
+    // Print return message to Serial
     Serial.print("xivelyclient.put returned ");
     Serial.println(ret);
 
@@ -172,91 +140,3 @@ void loop() {
     delay(10000);
 }
 
-void LCDMessage() { 
-
-	unsigned long currenTime = millis();
-
-	switch (displayCount) { 
-
-		case 1: mySerial.write(17); messageVar = random(0, NumMessages); // Select a random string from the array
-		mySerial.print(displayText[messageVar][0]); // Print First line to LCD 
-		LCDTime = millis(); 
-		displayCount = 2; 
-		break; 
-
-		case 2: if(currenTime > (LCDTime + lineDelay)) {  // Delay for lineDelay sec before displaying next line, not sure why.  
-			mySerial.write(13); // Carriage Return 
-			mySerial.print(displayText[messageVar][1]); 
-			LCDTime = millis(); 
-			displayCount = 3; 
-		}
-		break; 
-
-		case 3: if(currenTime > (LCDTime + clearDelay)) { 
-			mySerial.write(12); 
-			mySerial.write(18); 
-			displayCount = 4; 
-			LCDTime = millis(); 
-		} 
-
-		case 4: if(currenTime > (LCDTime + nextMesDelay)) { 
-			flashCounter = 0; 
-			flashCount = random(3,20); // Set the number of Backlight flashes to a random number of max value 20 
-			displayCount = 1; 
-		} 
-		break; 
-		default: displayCount = 1; 
-		break; 
-	}
-}
-
-/* Function for flasing the LCD backlight on and off */ \
-void backlightFlash() { 
-	unsigned long currenTime = millis();
-
-	if(flashCounter<flashCount) { 
-		switch (bF) { 
-			case 1: mySerial.write("17");
-			digitalWrite(LED2, HIGH); // Used for Testing 
-			bF = 2; 
-			bFTime = millis(); 
-			break; 
-
-			case 2: if(currenTime > (bFTime + 100)) bF=3; 
-			break; 
-
-			case 3: mySerial.write("18"); //
-			digitalWrite(LED2, LOW); // Used for Testing 
-			bF = 4; 
-			bFTime = millis(); 
-
-			case 4: if(currenTime > (bFTime + 100)) { 
-				bF=1; flashCounter++; 
-			} 
-			break; 
-			default: bF = 1; 
-			break; 
-		} 
-	}
-
-}
-
-/** Function for Fading the LED on and off without delaying the code **/ 
-void ledFade() {
-
-    unsigned long currenTime = millis();
-
-    if(currenTime > (fadeTime + 5)) {
-        analogWrite(ledPin, x); 
-        if(y) {x++;} if(!y) {
-            x--;
-        } 
-        if(x>250) {
-            y=0;
-        } 
-        if(x<10) {
-            y=1;
-        } 
-        fadeTime = millis(); 
-    } 
-}

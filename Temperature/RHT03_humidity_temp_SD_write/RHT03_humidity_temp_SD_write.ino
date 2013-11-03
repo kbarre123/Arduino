@@ -32,8 +32,6 @@ void setup() {
 }
 
 void loop() {
-    // Make a string for assembling the data to log;
-    String dataString = "";
     
     // Reading temperature or humidity takes about 250 milliseconds!
     // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)

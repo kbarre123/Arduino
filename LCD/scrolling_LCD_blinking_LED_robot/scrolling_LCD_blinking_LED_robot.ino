@@ -1,5 +1,5 @@
 // Notes: Changed LED outpin to pin 11 so I can use PWM 
-const int TxPin = 1; 
+const int TxPin = 7; 
 const int ledPin = 10; 
 const int lineDelay = 500; // Time between first line sent to LCD and second line.
 const int clearDelay = 2000; // time after a message is written, before we clear it const 

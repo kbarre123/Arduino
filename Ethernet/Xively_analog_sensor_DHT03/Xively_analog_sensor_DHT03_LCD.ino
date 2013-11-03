@@ -1,14 +1,13 @@
-    //Pins used by Ethernet shield for connection: 2, 3, 10-13
-
 #include <SPI.h>
 #include <Ethernet.h>
 #include <HttpClient.h>
 #include <Xively.h>
 #include <DHT.h>
+#include <LiquidCrystal.h>
 
-// Analog pin which we're monitoring;
+/********** SENSOR **********/
+// Define analog pin for sensor;
 int sensorPin = 4;
-int ledPin = 5;
 
 // Define the specific model of DHT03 per DHT.h
 #define DHTTYPE DHT22
@@ -16,6 +15,15 @@ int ledPin = 5;
 // Initialize DHT function
 DHT dht(sensorPin, DHTTYPE);
 
+/********** LED STATUS **********/
+// Define LED pin
+int ledPin = 5;
+
+/********** LCD DISPLAY **********/
+// Initialize the library with the numbers of the interface pins
+LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+
+/********** ETHERNET **********/
 // MAC address for your Ethernet shield
 byte mac[] = { 0xDE, 0xAD, 0xBE, 0xEF, 0xFE, 0xED };
 
@@ -49,11 +57,18 @@ void setup() {
     pinMode(sensorPin, INPUT);
     pinMode(ledPin, OUTPUT);
 
+    // Wake up the LCD
+    lcd.begin(16, 2);
+    // Print status
+    lcd.print("Connecting..."); 
+
     Serial.println("Starting single datastream upload to Xively...");
     Serial.println();
 
+    // Connect to the internet
     while (Ethernet.begin(mac) != 1)
     {
+        lcd.print("Trying again...");
         Serial.println("Error getting IP address via DHCP, trying again...");
         delay(10000);
     }
