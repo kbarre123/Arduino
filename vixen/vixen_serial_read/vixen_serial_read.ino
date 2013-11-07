@@ -1,3 +1,11 @@
+/*********************************************************** 
+* This code controls an Arduino Uno via Vixen. I'm using two
+* Sainsmart 5VDC SSR's to control the 14 strands of lights.
+* Check out my blog at bogusbarrett.com for a detailed walk-
+* through of the build and setup of Vixen 3.
+*
+***********************************************************/
+
 // which pins control which channels
 #define CHANNEL01  A5
 #define CHANNEL02  A4
@@ -48,7 +56,8 @@ void setup()
     //Serial1.begin(VIXEN_COM_SPEED);    // ********************* I only have 1 serial port; this was written for a Mega. WTF???
 
     // set the channel pins to output mode
-    for(int channelIndex=0;channelIndex<CHANNEL_COUNT;channelIndex++){
+    for(int channelIndex=0;channelIndex<CHANNEL_COUNT;channelIndex++)
+    {
         pinMode(channels[channelIndex],OUTPUT);
     }
 
