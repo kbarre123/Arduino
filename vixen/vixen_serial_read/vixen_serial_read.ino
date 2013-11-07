@@ -4,6 +4,10 @@
 * Check out my blog at bogusbarrett.com for a detailed walk-
 * through of the build and setup of Vixen 3.
 *
+* This code is modified from that which was written by Scott Shaver.
+* Videos for Version 1 of the controller can be found at this URL:
+* http://www.youtube.com/watch?v=B5Wsovc2TSg&list=PLp21wF8e4XnjNSQHJcnvNSDdb1wsPOfHi 
+*
 ***********************************************************/
 
 // which pins control which channels
