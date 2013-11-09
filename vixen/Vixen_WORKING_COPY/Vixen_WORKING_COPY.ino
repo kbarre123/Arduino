@@ -44,8 +44,7 @@ void setup()
   }
   
   pinMode(RANDOM_MODE_PIN, INPUT);
-  
-  turnLightsOff();
+
   powerOnSelfTest();
 }
 
@@ -73,9 +72,10 @@ void powerOnSelfTest()
   
   for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
   {
-    digitalWrite(channels[channelIndex], 0);
+    digitalWrite(channels[channelIndex], HIGH);
     delay(500);
-    digitalWrite(channels[channelIndex], 255);
+    //digitalWrite(channels[channelIndex], LOW);
+    //delay(500);
   }
   turnLightsOff();
 }
@@ -85,7 +85,7 @@ void turnLightsOff()
 {
   for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
   {// Switch from 0 to 255 once I hook up the relays; they're polarity is opposite that of an LED
-    digitalWrite(channels[channelIndex], 0);
+    digitalWrite(channels[channelIndex], LOW);
   }
 }
 
