@@ -43,11 +43,76 @@ void setup()
     pinMode(channels[channelIndex], OUTPUT);
   }
   
-  //turnLightsOff();
-  //powerOnSelfTest();
+  pinMode(RANDOM_MODE_PIN, INPUT);
+  
+  turnLightsOff();
+  powerOnSelfTest();
 }
 
 void loop()
+{ // If switch is on, then turn lights on/off randomly
+  if(analogRead(RANDOM_MODE_PIN > (1023 / 2)))
+  {
+    startingVixen = true;
+    doRandomLights();
+  }
+  else
+  { // Else, read data from Vixen
+    if(startingVixen == true)
+    {
+      turnLightsOff();
+      readFromVixen();
+    }
+  }
+}
+
+// Power on self test
+void powerOnSelfTest()
+{
+  turnLightsOff();
+  
+  for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+  {
+    digitalWrite(channels[channelIndex], 0);
+    delay(500);
+    digitalWrite(channels[channelIndex], 255);
+  }
+  turnLightsOff();
+}
+
+// Turn lights off
+void turnLightsOff()
+{
+  for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+  {// Switch from 0 to 255 once I hook up the relays; they're polarity is opposite that of an LED
+    digitalWrite(channels[channelIndex], 0);
+  }
+}
+
+// Do random light sequence
+void doRandomLights()
+{// Read value to pin A1 and generates a random sequence from it
+  randomSeed(analogRead(A1));
+  
+  for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+  {
+    int randNumber = random(0, 255);
+    randNumber = map(randNumber, 0, 255, 255, 0);
+    if(randNumber <= 127)
+    {
+      digitalWrite(channels[channelIndex], HIGH);
+    }
+    else
+    {
+      digitalWrite(channels[channelIndex], LOW);
+    }
+  }
+  
+  delay(random(100, RANDOM_MODE_SPEED));
+}
+
+// Read data from Vixen
+void readFromVixen()
 {
   if (Serial.available() >= CHANNEL_COUNT)
   {
