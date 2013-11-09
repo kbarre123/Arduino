@@ -67,7 +67,7 @@ void setup()
 
   // set up the switch for Vixen or Random mode
   pinMode(RANDOM_MODE_PININ, INPUT);
-  digitalWrite(RANDOM_MODE_PININ, HIGH); // turn on the internal pull-up resistor  ******************* What is this?
+  //digitalWrite(RANDOM_MODE_PININ, HIGH); // turn on the internal pull-up resistor  ******************* What is this?
   //pinMode(RANDOM_MODE_PINOUT, OUTPUT);  // ******************* What is this?
 
   turnLightsOff();  
@@ -87,18 +87,18 @@ void loop()
   { // play from Vixen mode
     if(startingVixen==true)
       turnLightsOff();
-    readFromVixen();
+      readFromVixen();
   }
 }
 
 void powerOnSelfTest()
 {
   turnLightsOff();  
-  Serial.println("Power on self test running.");
+  //Serial.println("Power on self test running.");
   for(int channelIndex=0;channelIndex<CHANNEL_COUNT;channelIndex++)
   {
-    Serial.print("Channel: ");
-    Serial.println(channelIndex+1, DEC);
+    //Serial.print("Channel: ");
+    //Serial.println(channelIndex+1, DEC);
     analogWrite(channels[channelIndex], 0); // turn on one channel at a time
     delay(500); // wait .5 seconds
     analogWrite(channels[channelIndex], 255);
@@ -117,8 +117,8 @@ void turnLightsOff()
 
 void doRandomLights()
 {
-  randomSeed(analogRead(1)); // Reads the volatage at this pin to seed the random # generator
-  Serial.println("Writing random values.");
+  randomSeed(analogRead(A1)); // Reads the volatage at this pin to seed the random # generator
+  //Serial.println("Writing random values.");
   for(int channelIndex=0;channelIndex<CHANNEL_COUNT;channelIndex++)
   {
     int randNumber = random(0, 255);
@@ -127,10 +127,10 @@ void doRandomLights()
       digitalWrite(channels[channelIndex], 0);  // This was "analogWrite" for some reason
     else
       digitalWrite(channels[channelIndex], 255);  // This was "analogWrite" for some reason
-    Serial.print(randNumber, DEC);
-    Serial.print(",");
+    //Serial.print(randNumber, DEC);
+    //Serial.print(",");
   }
-  Serial.println("");
+  //Serial.println("");
   delay(random(100, RANDOM_MODE_SPEED));
 }
 
@@ -139,15 +139,15 @@ void outputToLights(unsigned char* buffer)
   for(int channelIndex=0;channelIndex<CHANNEL_COUNT;channelIndex++)
   {
     analogWrite(channels[channelIndex], buffer[channelIndex]);
-    Serial.print(buffer[channelIndex], DEC);
-    Serial.print(",");
+    //Serial.print(buffer[channelIndex], DEC);
+    //Serial.print(",");
   }
-  Serial.println("");
+  //Serial.println("");
 }
 
 void readFromVixen()
 {
-  Serial.println("Waiting for data from Vixen.");
+  //Serial.println("Waiting for data from Vixen.");
   startingVixen = false;
   char *footer="VIXEN_END";
   unsigned char buffer[CHANNEL_COUNT];
@@ -155,7 +155,7 @@ void readFromVixen()
   int index=0;
   unsigned long time = millis();
 
-  //waitForVixenHeader();
+  waitForVixenHeader();
   while (true) 
   {
     int inByte = Serial.read();  // This was "int inByte = Serial1.read(); However, I changed the Vixen serial designation before the setup loop.  May need to play with this.
@@ -174,7 +174,7 @@ void readFromVixen()
     index++;
     if(index==9 && strcmp(footer,buffer2)==0)
     {
-      Serial.println(footer);
+      //Serial.println(footer);
       return;
     }
     else if(index==CHANNEL_COUNT)
@@ -183,13 +183,13 @@ void readFromVixen()
       index=0;
     }
   }
-  Serial.println("");
+  //Serial.println("");
 }
 
 void waitForVixenHeader()
 {
   char *header="VIXEN_START";
-  char buffer[12];  // *********************Why is this 12 and not CHANNEL_COUNT?
+  char buffer[CHANNEL_COUNT];  // *********************Why is this 12 and not CHANNEL_COUNT?
   int index = 0;
   unsigned long time = millis();
 
@@ -212,7 +212,7 @@ void waitForVixenHeader()
     index++;
     if(index==11 && strcmp(header,buffer)==0)
     {
-      Serial.println(header);
+      //Serial.println(header);
       return;
     }
   }
