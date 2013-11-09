@@ -1,57 +1,64 @@
-// Define output pins
-int Chan1 = 0;  
-int Chan2 = 1;  
-int Chan3 = 2;  
-int Chan4 = 3;  
-int Chan5 = 4;
-int Chan6 = 5;
-int Chan7 = 6;
-int Chan8 = 7;
-int Chan9 = 8;
-int Chan10 = 9;
-int Chan11 = 10;
-int Chan12 = 11;
-int Chan13 = 12;
-int Chan14 = 13;
+int A = 2;
+int B = 3;
+int C = 4;
+int D = 5;
+int E = 6;
+int F = 7;
+int G = 8;
+int H = 9;
+int I = 10;
+int J = 11;
+int K = 12;
+int L = 13;
+int M = A0;
+int N = A1;
 
-int i = 0;     // Loop counter
+int i = 0;
+int incomingByte[14];
 
-#define CHANNEL_COUNT 14
-
-// Array to hold data
-int channels[] = 
-{
-  Chan1, Chan2, Chan3, Chan4, Chan5, Chan6, Chan7, Chan8, Chan9, Chan10, 
-  Chan11, Chan12, Chan13, Chan14
-};
-
-int buffer[14];   // Array to store the values from the serial port
-
-// Setup all the things
 void setup()
 {
-  Serial.begin(57600);      // set up Serial at 57,600 baud
+  Serial.begin(57600);
 
-  // Set pins as outputs
-  for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
-  {
-    pinMode(channels[channelIndex], OUTPUT);
-  }
+  pinMode(A, OUTPUT);
+  pinMode(B, OUTPUT);
+  pinMode(C, OUTPUT);
+  pinMode(D, OUTPUT);
+  pinMode(E, OUTPUT);
+  pinMode(F, OUTPUT);
+  pinMode(G, OUTPUT);
+  pinMode(H, OUTPUT);
+  pinMode(I, OUTPUT);
+  pinMode(J, OUTPUT);
+  pinMode(K, OUTPUT);
+  pinMode(L, OUTPUT);
+  pinMode(M, OUTPUT);
+  pinMode(N, OUTPUT);
+
 }
 
-// Loop all the things
 void loop()
-{  // Read serial data from Vixen
-  if (Serial.available() >= CHANNEL_COUNT) 
-  { // read the oldest byte in the serial buffer:
-    for (int i = 0; i < CHANNEL_COUNT; i++) 
-    { // read each byte
-      buffer[i] = Serial.read();
-    } // write each byte
-    for(int i = 0; i < CHANNEL_COUNT; i++)
+{
+  if (Serial.available() >= 14)
+  {
+    for (int i=0; i<14; i++)
     {
-      analogWrite(channels[i], buffer[0]);
-    }
+      incomingByte[i] = Serial.read();
+    }                                       // Arduino pins
+    digitalWrite(A, incomingByte[0]);  // Pin 2
+    digitalWrite(B, incomingByte[1]);  // Pin 3
+    digitalWrite(C, incomingByte[2]);  // Pin 4
+    digitalWrite(D, incomingByte[3]);  // Pin 5
+    digitalWrite(E, incomingByte[4]);  // Pin 6
+    digitalWrite(F, incomingByte[5]);  // Pin 7
+    digitalWrite(G, incomingByte[6]);  // Pin 8
+    digitalWrite(H, incomingByte[7]);  // Pin 9
+    digitalWrite(I, incomingByte[8]);  // Pin 10
+    digitalWrite(J, incomingByte[9]);  // Pin 11
+    digitalWrite(K, incomingByte[10]); // Pin 12
+    digitalWrite(L, incomingByte[11]); // Pin 13
+    digitalWrite(M, incomingByte[12]); // Pin A0
+    digitalWrite(N, incomingByte[13]); // Pin A1
+    
   }
 }
-
