@@ -1,17 +1,17 @@
-#define ledPin_1 A4
-#define ledPin_2 A5
-#define ledPin_3 2
-#define ledPin_4 3
-#define ledPin_5 4
-#define ledPin_6 5
-#define ledPin_7 6
-#define ledPin_8 7
-#define ledPin_9 8
-#define ledPin_10 9
-#define ledPin_11 10
-#define ledPin_12 11
-#define ledPin_13 12
-#define ledPin_14 13
+#define CHANNEL_01 A4
+#define CHANNEL_02 A5
+#define CHANNEL_03 2
+#define CHANNEL_04 3
+#define CHANNEL_05 4
+#define CHANNEL_06 5
+#define CHANNEL_07 6
+#define CHANNEL_08 7
+#define CHANNEL_09 8
+#define CHANNEL_10 9
+#define CHANNEL_11 10
+#define CHANNEL_12 11
+#define CHANNEL_13 12
+#define CHANNEL_14 13
 
 //#define i 0
 int incomingByte[14];
@@ -21,26 +21,20 @@ int incomingByte[14];
 
 int channels[] = 
   {
-    ledPin_1, ledPin_2, ledPin_3, ledPin_4, ledPin_5, ledPin_6, ledPin_7,
-    ledPin_8, ledPin_9, ledPin_10, ledPin_11, ledPin_12, ledPin_13, ledPin_14
+    CHANNEL_01, CHANNEL_02, CHANNEL_03, CHANNEL_04, CHANNEL_05, CHANNEL_06, CHANNEL_07,
+    CHANNEL_08, CHANNEL_09, CHANNEL_10, CHANNEL_11, CHANNEL_12, CHANNEL_13, CHANNEL_14
   };
   
 #define CHANNEL_COUNT 14
 #define BAUD_RATE 57600
 
-#define MODE_DIMMING 0
-#define MODE_FULL 1
-#define MODE MODE_FULL
-
-boolean startingVixen = true;
-
 void setup()
 {
   Serial.begin(BAUD_RATE);
 
-  for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+  for(int i = 0; i < CHANNEL_COUNT; i++)
   {
-    pinMode(channels[channelIndex], OUTPUT);
+    pinMode(channels[i], OUTPUT);
   }
   
   pinMode(RANDOM_MODE_PIN, INPUT);
@@ -52,16 +46,21 @@ void loop()
 { // If switch is on, then turn lights on/off randomly
   if(analogRead(RANDOM_MODE_PIN > (1023 / 2)))
   {
-    startingVixen = true;
     doRandomLights();
   }
   else
   { // Else, read data from Vixen
-    if(startingVixen == true)
-    {
-      turnLightsOff();
-      readFromVixen();
-    }
+    turnLightsOff();
+    readFromVixen();
+  }
+}
+
+// Turn lights off
+void turnLightsOff()
+{
+  for(int i = 0; i < CHANNEL_COUNT; i++)
+  {// Switch from 0 to 255 once I hook up the relays; they're polarity is opposite that of an LED
+    digitalWrite(channels[i], LOW);
   }
 }
 
@@ -70,23 +69,13 @@ void powerOnSelfTest()
 {
   turnLightsOff();
   
-  for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+  for(int i = 0; i < CHANNEL_COUNT; i++)
   {
-    digitalWrite(channels[channelIndex], HIGH);
+    digitalWrite(channels[i], HIGH);
     delay(500);
-    //digitalWrite(channels[channelIndex], LOW);
-    //delay(500);
+    digitalWrite(channels[i], LOW);
   }
   turnLightsOff();
-}
-
-// Turn lights off
-void turnLightsOff()
-{
-  for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
-  {// Switch from 0 to 255 once I hook up the relays; they're polarity is opposite that of an LED
-    digitalWrite(channels[channelIndex], LOW);
-  }
 }
 
 // Do random light sequence
@@ -94,17 +83,17 @@ void doRandomLights()
 {// Read value to pin A1 and generates a random sequence from it
   randomSeed(analogRead(A1));
   
-  for(int channelIndex = 0; channelIndex < CHANNEL_COUNT; channelIndex++)
+  for(int i = 0; i < CHANNEL_COUNT; i++)
   {
     int randNumber = random(0, 255);
     randNumber = map(randNumber, 0, 255, 255, 0);
     if(randNumber <= 127)
     {
-      digitalWrite(channels[channelIndex], HIGH);
+      digitalWrite(channels[i], HIGH);
     }
     else
     {
-      digitalWrite(channels[channelIndex], LOW);
+      digitalWrite(channels[i], LOW);
     }
   }
   
@@ -115,11 +104,12 @@ void doRandomLights()
 void readFromVixen()
 {
   if (Serial.available() >= CHANNEL_COUNT)
-  {
+  {  // Store incoming bytes to buffer
     for (int i = 0; i < CHANNEL_COUNT; i++)
     {
       incomingByte[i] = Serial.read();
     }
+    // Write buffer to channels
     for (int i = 0; i < CHANNEL_COUNT; i++)
     {
       digitalWrite(channels[i], incomingByte[i]);
