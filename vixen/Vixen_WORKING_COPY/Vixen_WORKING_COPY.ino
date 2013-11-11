@@ -41,6 +41,8 @@ int incomingByte[14];
 // Define the baud rate for communication with Vixen. This must match that of the Vixen profile!!  
 #define BAUD_RATE 57600
 
+boolean startingVixen = true;
+
 void setup()
 {
   Serial.begin(BAUD_RATE);
@@ -53,17 +55,23 @@ void setup()
   pinMode(RANDOM_MODE_PIN, INPUT);
 
   powerOnSelfTest();
+  delay(1000);
 }
 
 void loop()
 { // If switch is on, then turn lights on/off randomly.
-  if(analogRead(RANDOM_MODE_PIN > (1023 / 2)))
+  if(analogRead(RANDOM_MODE_PIN) < (1023 / 2))
   {
+    startingVixen = true;
     doRandomLights();
   }
   else
   { // Else, read data from Vixen.
-    turnLightsOff();
+    if(startingVixen == true)
+    {
+      turnLightsOff();
+      readFromVixen();
+    }
     readFromVixen();
   }
 }
@@ -86,7 +94,7 @@ void powerOnSelfTest()
   {
     digitalWrite(channels[i], HIGH);
     delay(500);
-    digitalWrite(channels[i], LOW);
+    //digitalWrite(channels[i], LOW);
   }
   turnLightsOff();
 }
@@ -116,6 +124,7 @@ void doRandomLights()
 // Read data from Vixen.
 void readFromVixen()
 {
+  startingVixen = false;
   if (Serial.available() >= CHANNEL_COUNT)
   {  // Store incoming bytes to buffer.
     for (int i = 0; i < CHANNEL_COUNT; i++)
