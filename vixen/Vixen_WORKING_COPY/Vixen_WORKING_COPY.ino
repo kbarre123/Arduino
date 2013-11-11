@@ -64,13 +64,17 @@ void loop()
     doRandomLights();
   }
   else
-  { // Else, read data from Vixen.
+  { // Else, read data from Vixen. If first time in loop, turn off lights and read. Else, just read.
     if(startingVixen == true)
     {
       turnLightsOff();
       readFromVixen();
     }
-    readFromVixen();
+    else
+    {
+      readFromVixen();  
+    }
+    
   }
 }
 
