@@ -1,5 +1,3 @@
-//branch: serial.flush
-
 /* 
 This sketch allows the Arduino to read 14 bytes of data from Vixen and turn on
 its pins accordingly, which in turn control a solid state relay hooked up to Xmas lights.
@@ -55,7 +53,6 @@ void setup()
   pinMode(RANDOM_MODE_PIN, INPUT);
 
   powerOnSelfTest();
-  delay(1000);
 }
 
 void loop()
@@ -70,6 +67,7 @@ void loop()
     if(startingVixen == true)
     {
       turnLightsOff();
+      Serial.flush();
       readFromVixen();
     }
     else
