@@ -34,7 +34,7 @@ int incomingByte[14];
 
 // Define the pin that will trigger "random mode".
 #define RANDOM_MODE_PIN A0
-#define RANDOM_MODE_SPEED 5000
+#define RANDOM_MODE_SPEED 1000
 
 // Define the baud rate for communication with Vixen. This must match that of the Vixen profile!!  
 #define BAUD_RATE 57600
@@ -120,7 +120,7 @@ void doRandomLights()
     }
   }
   
-  delay(random(100, RANDOM_MODE_SPEED));
+  delay(random(1000, RANDOM_MODE_SPEED));
 }
 
 // Read data from Vixen.
