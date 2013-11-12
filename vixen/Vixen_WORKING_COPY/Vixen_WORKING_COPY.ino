@@ -64,7 +64,7 @@ void setup()
 
 void loop()
 { // If switch is on, then turn lights on/off randomly.
-  if(analogRead(RANDOM_MODE_PIN) < (1023 / 2))
+  if(analogRead(RANDOM_MODE_PIN) > (1023 / 2))
   {
     startingVixen = true;
     doRandomLights();
