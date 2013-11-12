@@ -39,6 +39,11 @@ int incomingByte[14];
 // Define the baud rate for communication with Vixen. This must match that of the Vixen profile!!  
 #define BAUD_RATE 57600
 
+/*
+On first pass through the main loop whilst not in random-mode, the program is forced to turn off
+the lights, flush the serial buffer, and then proceed to readFromVixen. Once the program
+enters readFromVixen(), 
+*/
 boolean startingVixen = true;
 
 void setup()
@@ -74,7 +79,6 @@ void loop()
     {
       readFromVixen();  
     }
-    
   }
 }
 
@@ -118,8 +122,7 @@ void doRandomLights()
     {
       digitalWrite(channels[i], LOW);
     }
-  }
-  
+  } 
   delay(random(1000, RANDOM_MODE_SPEED));
 }
 
