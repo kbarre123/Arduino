@@ -42,7 +42,9 @@ int incomingByte[14];
 /*
 On first pass through the main loop whilst not in random-mode, the program is forced to turn off
 the lights, flush the serial buffer, and then proceed to readFromVixen. Once the program
-enters readFromVixen(), 
+enters readFromVixen(), the startingVixen variable gets flipped to false, allowing the program to
+progress through the 'else' portion of the statement, which doesn't include flushing the buffer and
+turning the lights off; only 'readFromVixen()'.
 */
 boolean startingVixen = true;
 
