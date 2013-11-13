@@ -1,5 +1,3 @@
-//IRremots_switch_test branch
-
 /*
 Here are the hex codes from the generic IR remote that came with my starter kit.
 The codes are in order, left to right, top to bottom:
@@ -42,8 +40,10 @@ void setup()
   irrecv.enableIRIn(); // Start the receiver
 }
 
-void loop() {
-  if (irrecv.decode(&results)) {
+void loop() 
+{
+  if (irrecv.decode(&results)) 
+  {
     Serial.println(results.value, HEX);
     irrecv.resume(); // Receive the next value
   }
