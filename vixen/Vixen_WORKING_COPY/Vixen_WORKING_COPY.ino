@@ -1,5 +1,3 @@
-//  PWM
-
 /* 
 This sketch allows the Arduino to read 14 bytes of data from Vixen and turn on
 its pins accordingly, which in turn control a solid state relay hooked up to Xmas lights.
@@ -46,7 +44,7 @@ On first pass through the main loop whilst not in random-mode, the program is fo
 the lights, flush the serial buffer, and then proceed to readFromVixen. Once the program
 enters readFromVixen(), the startingVixen variable gets flipped to false, allowing the program to
 progress through the 'else' portion of the main loop, which doesn't include flushing the buffer and
-turning the lights off; only will only 'readFromVixen()'.
+turning the lights off; it will only 'readFromVixen()'.
 */
 boolean startingVixen = true;
 
