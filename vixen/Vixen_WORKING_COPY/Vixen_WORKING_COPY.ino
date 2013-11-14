@@ -45,8 +45,8 @@ int incomingByte[14];
 On first pass through the main loop whilst not in random-mode, the program is forced to turn off
 the lights, flush the serial buffer, and then proceed to readFromVixen. Once the program
 enters readFromVixen(), the startingVixen variable gets flipped to false, allowing the program to
-progress through the 'else' portion of the statement, which doesn't include flushing the buffer and
-turning the lights off; only 'readFromVixen()'.
+progress through the 'else' portion of the main loop, which doesn't include flushing the buffer and
+turning the lights off; only will only 'readFromVixen()'.
 */
 boolean startingVixen = true;
 
@@ -86,12 +86,14 @@ void loop()
   }
 }
 
+//***************** DEFINE FUNCTIONS ************************
+
 // Turn lights off
 void turnLightsOff()
 {
   for(int i = 0; i < CHANNEL_COUNT; i++)
   {// Switch from 0 to 255 once I hook up the relays; they're polarity is opposite than LEDs'.
-    digitalWrite(channels[i], LOW);
+    analogWrite(channels[i], 0);
   }
 }
 
@@ -102,7 +104,7 @@ void powerOnSelfTest()
   
   for(int i = 0; i < CHANNEL_COUNT; i++)
   {
-    digitalWrite(channels[i], HIGH);
+    analogWrite(channels[i], 255);
     delay(500);
     //digitalWrite(channels[i], LOW);
   }
@@ -120,11 +122,11 @@ void doRandomLights()
     randNumber = map(randNumber, 0, 255, 255, 0);
     if(randNumber <= 127)
     {
-      digitalWrite(channels[i], HIGH);
+      analogWrite(channels[i], 255);
     }
     else
     {
-      digitalWrite(channels[i], LOW);
+      analogWrite(channels[i], 0);
     }
   } 
   delay(random(1000, RANDOM_MODE_SPEED));
@@ -143,7 +145,7 @@ void readFromVixen()
     // Write buffer to channels.
     for (int i = 0; i < CHANNEL_COUNT; i++)
     {
-      digitalWrite(channels[i], incomingByte[i]);
+      analogWrite(channels[i], incomingByte[i]);
     }    
   }
 }
