@@ -1,3 +1,5 @@
+//  PWM
+
 /* 
 This sketch allows the Arduino to read 14 bytes of data from Vixen and turn on
 its pins accordingly, which in turn control a solid state relay hooked up to Xmas lights.
