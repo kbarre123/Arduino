@@ -84,7 +84,7 @@ void loop()
   }
 }
 
-//***************** DEFINE FUNCTIONS ************************
+//***************** DEFINE FUNCTIONS *****************
 
 // Turn lights off
 void turnLightsOff()
