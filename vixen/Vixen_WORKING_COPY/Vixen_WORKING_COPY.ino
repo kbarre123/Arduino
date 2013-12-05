@@ -39,7 +39,7 @@ int incomingByte[16];
 #define RANDOM_MODE_SPEED 1000
 
 // Define the baud rate for communication with Vixen. This must match that of the Vixen profile!!  
-#define BAUD_RATE 57600
+#define BAUD_RATE 19200
 
 /*
 On first pass through the main loop whilst not in random-mode, the program is forced to turn off
@@ -65,7 +65,7 @@ void setup()
 }
 
 void loop()
-{ // If switch is on, then turn lights on/off randomly.
+{ // If pin is less than 512, then turn lights on/off randomly.
   if(analogRead(RANDOM_MODE_PIN) > (1023 / 2))
   {
     startingVixen = true;
@@ -76,7 +76,6 @@ void loop()
     if(startingVixen == true)
     {
       turnLightsOff();
-      Serial.flush();
       readFromVixen();
     }
     else
