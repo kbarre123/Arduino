@@ -16,28 +16,30 @@ its pins accordingly, which for testing purposes are represented by 14 LEDs.
 #define CHANNEL_10 11
 #define CHANNEL_11 12
 #define CHANNEL_12 13
-#define CHANNEL_13 A4
-#define CHANNEL_14 A5
+#define CHANNEL_13 A2
+#define CHANNEL_14 A3
+#define CHANNEL_15 A4
+#define CHANNEL_16 A5
 
 // Define array of channels.
 int channels[] = 
   {
-    CHANNEL_01, CHANNEL_02, CHANNEL_03, CHANNEL_04, CHANNEL_05, CHANNEL_06, CHANNEL_07,
-    CHANNEL_08, CHANNEL_09, CHANNEL_10, CHANNEL_11, CHANNEL_12, CHANNEL_13, CHANNEL_14
+    CHANNEL_01, CHANNEL_02, CHANNEL_03, CHANNEL_04, CHANNEL_05, CHANNEL_06, CHANNEL_07, CHANNEL_08, 
+    CHANNEL_09, CHANNEL_10, CHANNEL_11, CHANNEL_12, CHANNEL_13, CHANNEL_14, CHANNEL_15, CHANNEL_16
   };
 
 // Define number of channels.
-#define CHANNEL_COUNT 14
+#define CHANNEL_COUNT 16
 
 // Define buffer to store data from Vixen until it gets written to the Arduino.
-int incomingByte[14];
+int incomingByte[16];
 
 // Define the pin that will trigger "random mode".
 #define RANDOM_MODE_PIN A0
 #define RANDOM_MODE_SPEED 1000
 
 // Define the baud rate for communication with Vixen. This must match that of the Vixen profile!!  
-#define BAUD_RATE 38400
+#define BAUD_RATE 19200
 
 /*
 On first pass through the main loop whilst not in random-mode, the program is forced to turn off
@@ -63,7 +65,7 @@ void setup()
 }
 
 void loop()
-{ // If switch is on, then turn lights on/off randomly.
+{ // If pin is less than 512, then turn lights on/off randomly.
   if(analogRead(RANDOM_MODE_PIN) > (1023 / 2))
   {
     startingVixen = true;
@@ -74,7 +76,6 @@ void loop()
     if(startingVixen == true)
     {
       turnLightsOff();
-      Serial.flush();
       readFromVixen();
     }
     else

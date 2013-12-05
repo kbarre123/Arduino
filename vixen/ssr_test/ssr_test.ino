@@ -17,19 +17,19 @@ This sketch tests the functionality of two 8 channel 5VDC SSR's.
 #define CHANNEL_12 13
 #define CHANNEL_13 A5
 #define CHANNEL_14 A4
-#define CHANNEL_15 A3
-#define CHANNEL_16 A2
+//#define CHANNEL_15 A3
+//#define CHANNEL_16 A2
 
 
 // Define array of channels.
 int channels[] = 
   {
     CHANNEL_01, CHANNEL_02, CHANNEL_03, CHANNEL_04, CHANNEL_05, CHANNEL_06, CHANNEL_07, CHANNEL_08,
-    CHANNEL_09, CHANNEL_10, CHANNEL_11, CHANNEL_12, CHANNEL_13, CHANNEL_14, CHANNEL_15, CHANNEL_16 
-  };
+    CHANNEL_09, CHANNEL_10, CHANNEL_11, CHANNEL_12, CHANNEL_13, CHANNEL_14
+  };  //, CHANNEL_15, CHANNEL_16 
 
 // Define number of channels.
-#define CHANNEL_COUNT 16
+#define CHANNEL_COUNT 14
 
 void setup()
 {
@@ -58,7 +58,7 @@ void testLights()
   for(int i = 0; i < CHANNEL_COUNT; i++)
   {
     digitalWrite(channels[i], LOW);
-    delay(100);
+    delay(25);
   }
 }
 
