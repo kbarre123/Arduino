@@ -16,10 +16,10 @@ its pins accordingly, which for testing purposes are represented by 14 LEDs.
 #define CHANNEL_10 11
 #define CHANNEL_11 12
 #define CHANNEL_12 13
-#define CHANNEL_13 A2
-#define CHANNEL_14 A3
-#define CHANNEL_15 A4
-#define CHANNEL_16 A5
+#define CHANNEL_13 A5
+#define CHANNEL_14 A4
+#define CHANNEL_15 A3
+#define CHANNEL_16 A2
 
 // Define array of channels.
 int channels[] = 
@@ -61,27 +61,24 @@ void setup()
   // Set up the pin for random mode as input.
   pinMode(RANDOM_MODE_PIN, INPUT);
 
+  turnLightsOff();
   powerOnSelfTest();
 }
 
 void loop()
-{ // If pin is less than 512, then turn lights on/off randomly.
-  if(analogRead(RANDOM_MODE_PIN) > (1023 / 2))
+{ // If pin is LOW, then turn lights on/off randomly.
+  if(digitalRead(RANDOM_MODE_PIN) == HIGH)
   {
     startingVixen = true;
     doRandomLights();
   }
   else
-  { // Else, read data from Vixen. If first time in loop, turn off lights and read. Else, just read.
+  { // Else, read data from Vixen.
     if(startingVixen == true)
     {
       turnLightsOff();
       readFromVixen();
-    }
-    else
-    {
-      readFromVixen();  
-    }
+    }  
   }
 }
 
