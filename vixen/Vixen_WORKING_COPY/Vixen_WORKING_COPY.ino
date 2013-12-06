@@ -39,7 +39,7 @@ int incomingByte[16];
 #define RANDOM_MODE_SPEED 1000
 
 // Define the baud rate for communication with Vixen. This must match that of the Vixen profile!!  
-#define BAUD_RATE 19200
+#define BAUD_RATE 57600
 
 /*
 On first pass through the main loop whilst not in random-mode, the program is forced to turn off
