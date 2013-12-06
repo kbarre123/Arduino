@@ -52,7 +52,17 @@ void testLights()
   for(int i = 0; i < CHANNEL_COUNT; i++)
   {
     digitalWrite(channels[i], HIGH);
+<<<<<<< HEAD
     //delay(100);
+=======
+    delay(100);
+  }
+  delay(120000);
+  for(int i = 0; i < CHANNEL_COUNT; i++)
+  {
+    digitalWrite(channels[i], LOW);
+    delay(25);
+>>>>>>> c59920afb933c92d76977fe52b9a8d95374672f7
   }
 }
 
