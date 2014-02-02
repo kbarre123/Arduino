@@ -54,23 +54,38 @@ void loop() {
                     client.println("HTTP/1.1 200 OK");
                     client.println("Content-Type: text/html");
                     client.println("Connection: close");  // the connection will be closed after completion of the response
-                    client.println("Refresh: 5");  // refresh the page automatically every 5 sec
+                    client.println("Refresh: 10");  // refresh the page automatically every 5 sec
                     client.println();
                     client.println("<!DOCTYPE HTML>");
                     client.println("<html>");
+                    client.println("<head>");
+                    client.println("<meta name='viewport' content='width=device-width, initial-scale=1.0'>");
+                    client.println("<style type='text/css'>");
+                    client.println(".tftable {font-size:12px;color:#333333;width:100%;border-width: 1px;border-color: #729ea5;border-collapse: collapse;}");
+                    client.println(".tftable th {font-size:12px;background-color:#acc8cc;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;text-align:center;}");
+                    client.println(".tftable tr {background-color:#d4e3e5;}");
+                    client.println(".tftable td {font-size:12px;border-width: 1px;padding: 8px;border-style: solid;border-color: #729ea5;}");
+                    client.println(".tftable tr:hover {background-color:#ffffff;}");
+                    client.println("</style>");
+                    client.println("<title>My Arduino Webserver</title>");
+                    client.println("</head>");
                     client.println("<body>");
                     client.println("<h2>");
                     client.println("<p> Analog Sensor Readings </p>");
                     client.println("</h2>");
+                    client.println("</h2>");
+                    client.println("<table class='tftable' border='1'>");
+                    client.println("<tr><th>Analog Pin</th><th>Reading</th></tr>");
                     // output the value of each analog input pin
                     for (int analogChannel = 0; analogChannel < 6; analogChannel++) {
                         int sensorReading = analogRead(analogChannel);
-                        client.print("analog input ");
+                        client.print("<tr><td>");
                         client.print(analogChannel);
-                        client.print(" is ");
+                        client.print("</td><td>");
                         client.print(sensorReading);
-                        client.println("<br />");       
+                        client.println("</td></tr>");       
                     }
+                    client.println("</table>");
                     client.println("</body>");
                     client.println("</html>");
                     break;

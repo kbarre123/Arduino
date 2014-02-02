@@ -1,4 +1,4 @@
-    //Pins used by Ethernet shield for connection: 2, 3, 10-13
+//Pins used by Ethernet shield for connection: 2, 3, 10-13
 
 #include <SPI.h>
 #include <Ethernet.h>
@@ -8,7 +8,7 @@
 
 // Analog pin which we're monitoring;
 int sensorPin = 4;
-int ledPin = 5;
+//int ledPin = 5;
 
 // Define the specific model of DHT03 per DHT.h
 #define DHTTYPE DHT22
@@ -47,7 +47,7 @@ void setup() {
 
     // Pin setup
     pinMode(sensorPin, INPUT);
-    pinMode(ledPin, OUTPUT);
+    //pinMode(ledPin, OUTPUT);
 
     Serial.println("Starting single datastream upload to Xively...");
     Serial.println();
@@ -65,7 +65,7 @@ void setup() {
 void loop() {
     
     // Turn off status LED
-    digitalWrite(ledPin, LOW);
+    //digitalWrite(ledPin, LOW);
     
     // Reading temperature or humidity takes about 250 ms
     // Sensor readings may also be up to 2 seconds old
@@ -78,10 +78,11 @@ void loop() {
     datastreams[1].setFloat(h);
     
     // Print the readings to Serial
-    Serial.print("Humidity: ");
+
+    Serial.print("Temperature: ");
     Serial.print(datastreams[0].getFloat());
     Serial.print("% \t");
-    Serial.print("Temperature: ");
+    Serial.print("Humidity: ");
     Serial.print(datastreams[1].getFloat());
     Serial.println(" *F");
 
@@ -89,19 +90,19 @@ void loop() {
     Serial.println("Uploading it to Xively...");
     int ret = xivelyclient.put(feed, xivelyKey);
     
-    // If uploaded to Xively, tuen on status LED
+    /* If uploaded to Xively, tuen on status LED
     if (ret) {
         digitalWrite(ledPin, HIGH);
     }
     else {
         digitalWrite(ledPin, LOW);
-    }
+    }*/
     
     // Return message
     Serial.print("xivelyclient.put returned ");
     Serial.println(ret);
 
     Serial.println();
-    delay(10000);
+    delay(5000);
 }
 
