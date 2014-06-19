@@ -1,5 +1,3 @@
-// Brew Test Branch
-
 /* TODO: 
     1) Implement LED blink when target temp is achieved;
     2) Implement piezzo beep when target temp is achieved;
@@ -13,22 +11,24 @@
 // RHT03 sensor pin.
 int sensorPin = 13;
 
-// Define the specific model of RHT03 per DHT.h.
+// Define the specific model of RHT03 per DHT.h
 #define DHTTYPE DHT22
 
-// Initialize DHT object.
+// Initialize DHT object
 DHT dht(sensorPin, DHTTYPE);
 
-/********** LED STATUS **********/
-// LED pin.
+/********** LED STUFF **********/
+// LED pin
 int ledPin = 12;
+// Turn on LED when <t> reaches this target temp(F)
+int targetTemp = 81;
 
 /********** LCD DISPLAY **********/
 // Pin name on LCD:     { VSS, VDD, VO,       RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
 // Pin name on Arduino: { Grd, Vcc, 10k pot*, 4,  Gnd, 5, NA, NA, NA, NA, 6,  7,  8,  9,  Vcc, Grd }
 // *10k pot uses ground-to-ground and wiper-to VO pin on LCD shield
 
-// Initialize LCD Display object.
+// Initialize LCD Display object
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 
 void setup() 
@@ -88,6 +88,9 @@ void loop()
     lcd.print("H: ");
     lcd.print(h);
     lcd.print(" % ");
+    
+    // Check if target temp is achieved; turn on LED if so
+    
   }
   
   delay(1000);
