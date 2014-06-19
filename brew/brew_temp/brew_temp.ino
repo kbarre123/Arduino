@@ -42,6 +42,7 @@ void setup()
 
   // Print status
   lcd.clear();
+  digitalWrite(ledPin, HIGH);
   lcd.print("* Bebop Robot *");
   delay(2000);
   lcd.setCursor(0, 1);
@@ -89,7 +90,11 @@ void loop()
     lcd.print(h);
     lcd.print(" % ");
     
-    // Check if target temp is achieved; turn on LED if so
+    // Check if targetTemp is achieved; turn on LED if so
+    if (t >= targetTemp) 
+    {
+      digitalWrite(ledPin, HIGH);
+    }
     
   }
   
