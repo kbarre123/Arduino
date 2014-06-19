@@ -1,5 +1,5 @@
 /* TODO: 
-    1) Implement LED blink when target temp is achieved;
+    1) Implement LED temp/time scale (blue/green/yellow/red);
     2) Implement piezzo beep when target temp is achieved;
 */
 
