@@ -1,3 +1,5 @@
+// Brew Test Branch
+
 /* TODO: 
     1) Implement LED blink when target temp is achieved;
     2) Implement piezzo beep when target temp is achieved;
@@ -40,12 +42,12 @@ void setup()
 
   // Print status
   lcd.clear();
-  //lcd.setCursor(0, 0);
-  lcd.print("Beep Boop Robot ");
+  lcd.print("* Bebop Robot *");
   delay(2000);
   lcd.setCursor(0, 1);
   lcd.print("Let's Brew This!");
   delay(2000);
+  lcd.clear();
 
   // Wake up the sensor
   Serial.println("Waking up sensor...");
@@ -56,7 +58,6 @@ void loop()
 {
   // Reset LED and LCD display
   digitalWrite(ledPin, LOW);
-  lcd.clear();
   lcd.setCursor(0, 0);
 
   // Read sensor, may take about 250 ms
@@ -89,7 +90,7 @@ void loop()
     lcd.print(" % ");
   }
   
-  delay(2000);
+  delay(1000);
 }
 
 
