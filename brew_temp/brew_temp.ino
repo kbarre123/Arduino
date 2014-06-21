@@ -1,23 +1,18 @@
 /* TODO: 
     1) Implement LED temp/time scale (blue/green/yellow/red);
-    2) Implement piezzo beep when target temp is achieved;
+    2) Implement Beep when target temp is achieved;
 */
 
-#include <DHT.h>
-#include <SPI.h>
+#include <OneWire.h>
 #include <LiquidCrystal.h>
 
 /********** SENSOR **********/
-// RHT03 sensor pin.
+// DS18B20 sensor pin.
 int sensorPin = 13;
+// Instantiate OneWire object
+OneWire ds(sensorPin);
 
-// Define the specific model of RHT03 per DHT.h
-#define DHTTYPE DHT22
-
-// Initialize DHT object
-DHT dht(sensorPin, DHTTYPE);
-
-/********** LED STUFF **********/
+/********** LED **********/
 // LED pin
 int ledPin = 12;
 // Turn on LED when <t> reaches this target temp(F)
@@ -37,7 +32,7 @@ void setup()
   lcd.begin(16, 2);
 
   // Pin setup
-  pinMode(sensorPin, INPUT);
+  //pinMode(sensorPin, INPUT);
   pinMode(ledPin, OUTPUT);
 
   // Print status
@@ -49,11 +44,7 @@ void setup()
   lcd.print("Let's Brew This!");
   delay(2000);
   lcd.clear();
-
-  // Wake up the sensor
-  Serial.println("Waking up sensor...");
-  dht.begin();
-}
+}// End Setup
 
 void loop() 
 {
@@ -61,44 +52,83 @@ void loop()
   digitalWrite(ledPin, LOW);
   lcd.setCursor(0, 0);
 
-  // Read sensor, may take about 250 ms
-  float h = dht.readHumidity();
-  float c = dht.readTemperature();
-  // Convert to Farenheit
-  float t = (c * 9 / 5) + 32;
+  // Read sensor here.
+  float temp = getTemp();
 
-  // Validate readings and print to Serial
-  if (isnan(t) || isnan(h)) 
+  // Validate reading and print to Serial
+  if (isnan(temp)) 
   {
-    Serial.println("Failed to read from DHT");
+    Serial.println("Failed to read temp!");
   }
   else
   {
+    // Print temp to Serial
     Serial.print("Temperature: ");
-    Serial.print(t);
-    Serial.print("*F \t");
-    Serial.print("Humidity: ");
-    Serial.print(h);
-    Serial.println("%");
-
-    // Print the readings to LCD
+    Serial.print(temp);
+    Serial.println(" *F");
+    
+    // Print temp to LCD
     lcd.print("T: ");
-    lcd.print(t);
+    lcd.print(temp);
     lcd.print(" *F");
-    lcd.setCursor(0, 1);
-    lcd.print("H: ");
-    lcd.print(h);
-    lcd.print(" % ");
     
     // Check if targetTemp is achieved; turn on LED if so
-    if (t >= targetTemp) 
+    if (temp >= targetTemp) 
     {
       digitalWrite(ledPin, HIGH);
+      // TODO: Beep
     }
-    
+  }
+  delay(1000);
+}// End Main Loop
+
+
+// Returns the temp from DS18B20 in DEG Celsius
+float getTemp()
+{
+  byte data[12];
+  byte addr[8];
+  
+  // If no more sensors on the chain, reset search
+  if (!ds.search(addr))
+  {
+    ds.reset_search();
+    return -1000;
   }
   
-  delay(1000);
+  if (OneWire::crc8(addr, 7) != addr[7])
+  {
+    Serial.println("CRC is not valid!");
+    return -1000;
+  }
+  
+  if (addr[0] != 0x10 && addr[0] != 0x28)
+  {
+    Serial.println("Device is not recognized!");
+    return -1000;
+  }
+  
+  ds.reset();
+  ds.select(addr);
+  // Start conversion, w/ parasite power on at the end (IDK WFT this means)
+  ds.write(0x44, 1);
+  
+  byte present = ds.reset();
+  ds.select(addr);
+  ds.write(0xBE); // Read Scratchpad
+  
+  for (int i = 0; i < 9; i++) 
+  {
+    data[i] = ds.read();
+  }
+  
+  ds.reset_search();
+  
+  byte MSB = data[1];
+  byte LSB = data[0];
+  
+  float tempRead = ((MSB << 8) | LSB); // Using 2's compliment
+  float TemperatureSum = tempRead / 16;
+  
+  return TemperatureSum;
 }
-
-
