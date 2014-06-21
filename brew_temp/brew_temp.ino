@@ -1,6 +1,8 @@
 /* TODO: 
-    1) Implement LED temp/time scale (blue/green/yellow/red);
-    2) Implement Beep when target temp is achieved;
+    1) Implement LED temp/time scale (blue/green/yellow/red);.
+    2) Implement function that beeps when target temp is achieved. Need a way to reset/mute beep.
+    3) Implement second temp sensor.
+    4) Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
 */
 
 #include <OneWire.h>
@@ -16,7 +18,8 @@ OneWire ds(sensorPin);
 // LED pin
 int ledPin = 12;
 // Turn on LED when <t> reaches this target temp(F)
-int targetTemp = 81;
+int targetTemp = 82;
+boolean ledState = false;
 
 /********** LCD DISPLAY **********/
 // Pin name on LCD:     { VSS, VDD, VO,       RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
@@ -49,34 +52,46 @@ void setup()
 void loop() 
 {
   // Reset LED and LCD display
-  digitalWrite(ledPin, LOW);
+  if (ledState == false)
+  {
+    digitalWrite(ledPin, LOW);
+  }
+  else
+  {
+    digitalWrite(ledPin, HIGH);
+  }
   lcd.setCursor(0, 0);
 
   // Read sensor here.
-  float temp = getTemp();
+  float readTemp = getTemp();
 
   // Validate reading and print to Serial
-  if (isnan(temp)) 
+  if (isnan(readTemp)) 
   {
     Serial.println("Failed to read temp!");
   }
   else
   {
+    float temp = (readTemp * 9.0 / 5.0) + 32.0;
     // Print temp to Serial
     Serial.print("Temperature: ");
-    Serial.print(temp);
+    Serial.println(temp);
     Serial.println(" *F");
     
     // Print temp to LCD
-    lcd.print("T: ");
+    lcd.print("Boil: ");
     lcd.print(temp);
-    lcd.print(" *F");
+    lcd.print(" ");
     
     // Check if targetTemp is achieved; turn on LED if so
     if (temp >= targetTemp) 
     {
-      digitalWrite(ledPin, HIGH);
+      ledState = true;
       // TODO: Beep
+    }
+    else
+    {
+      ledState = false;
     }
   }
   delay(1000);
