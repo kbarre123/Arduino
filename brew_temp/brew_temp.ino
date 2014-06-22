@@ -10,13 +10,17 @@
 
 /********** SENSOR **********/
 // DS18B20 sensor pin.
-int sensorPin = 13;
+// Address A: 0x28, 0xE7, 0x30, 0x06, 0x06, 0x00, 0x00, 0xEE
+// Address B: 0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58
+
+
+int sensorPin = 12;
 // Instantiate OneWire object
 OneWire ds(sensorPin);
 
 /********** LED **********/
 // LED pin
-int ledPin = 12;
+int ledPin = 11;
 // Turn on LED when <t> reaches this target temp(F)
 int targetTemp = 82;
 boolean ledState = false;
