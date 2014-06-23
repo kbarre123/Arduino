@@ -14,13 +14,13 @@
 // Address B: 0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58
 
 
-int sensorPin = 12;
+int sensorPin = 11;
 // Instantiate OneWire object
 OneWire ds(sensorPin);
 
 /********** LED **********/
 // LED pin
-int ledPin = 11;
+int ledPin = 10;
 // Turn on LED when <t> reaches this target temp(F)
 int targetTemp = 82;
 boolean ledState = false;
