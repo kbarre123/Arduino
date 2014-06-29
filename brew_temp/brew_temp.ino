@@ -7,6 +7,7 @@
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <LiquidCrystal.h>
+#include "pitches.h"
 
 /********** SENSORS **********/
 // DS18B20 Pinout (Left to Right, pins down, flat side toward you)
@@ -51,6 +52,18 @@ boolean boilLED = false;
 // Initialize LCD Display object
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 
+//**************** BUZZER ****************/
+int buzzerPin = 12;
+int notes[] = {  // Notes in the melody:
+  NOTE_A6
+ };
+
+int notesSize = sizeof(notes) / sizeof(int);
+
+int notesLength[] = {  // Note durations: 4 = quarter note, 8 = eighth note, etc.:
+  4
+};
+
 void setup() 
 {
   Serial.begin(9600);
@@ -80,6 +93,7 @@ void setup()
   Serial.println(DALLASTEMPLIBVERSION);
   Serial.print("Number of Devices found on bus = ");  
   Serial.println(sensors.getDeviceCount());
+  
 }// End Setup
 
 void loop() 
@@ -118,12 +132,16 @@ void loop()
   // Check if boilTarget is achieved; turn on LED if so
    if (tempBoil < boilTarget) 
    {
-   digitalWrite(ledPin, LOW);
-   // TODO: Beep
+     digitalWrite(ledPin, LOW);
+     // TODO: Beep
    }
    else
    {
-   digitalWrite(ledPin, HIGH);
+     digitalWrite(ledPin, HIGH);
+     for (int i = 0; i < notesSize ; i++) {
+       int notesDuration = 1000/notesLength[i];
+       tone(buzzerPin, notes[i], notesDuration);
+     }
    }
   delay(1000);
 }// End Main Loop 
