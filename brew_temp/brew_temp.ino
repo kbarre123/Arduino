@@ -84,15 +84,7 @@ void setup()
 
 void loop() 
 {
-  // Reset LED and LCD display
-  if (boilLED == false)
-  {
-    digitalWrite(ledPin, LOW);
-  }
-  else
-  {
-    digitalWrite(ledPin, HIGH);
-  }
+  // Reset LCD display
   lcd.setCursor(0, 0);
 
   Serial.println("Getting temperatures... ");   
@@ -124,14 +116,14 @@ void loop()
   lcd.print(" *F");
   
   // Check if boilTarget is achieved; turn on LED if so
-   if (tempBoil >= boilTarget) 
+   if (tempBoil < boilTarget) 
    {
-   boilLED = true;
+   digitalWrite(ledPin, LOW);
    // TODO: Beep
    }
    else
    {
-   boilLED = false;
+   digitalWrite(ledPin, HIGH);
    }
   delay(1000);
 }// End Main Loop 
