@@ -3,10 +3,10 @@
    * Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
  */
 
-#include <OneWire.h>
-#include <DallasTemperature.h>
-#include <LiquidCrystal.h>
-#include <Pitches.h>
+#include <OneWire.h>             // Get 1-wire Library here: http://www.pjrc.com/teensy/td_libs_OneWire.html
+#include <DallasTemperature.h>   // Get DallasTemperature Library here:  http://milesburton.com/Main_Page?title=Dallas_Temperature_Control_Library
+#include <LiquidCrystal.h>       // Taken from the Arduino website
+#include <Pitches.h>             // Taken from the Arduino website
 
 /********** SENSORS **********/
 // DS18B20 Pinout (Left to Right, pins down, flat side toward you)
@@ -22,7 +22,7 @@
 // Sensor B: 0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58
 
 // Define data pin for OneWire bus (all sensors parallel on this pin)
-#define ONE_WIRE_BUS_PIN 11
+#define ONE_WIRE_BUS_PIN 12
 // Instantiate OneWire object
 OneWire ds(ONE_WIRE_BUS_PIN);
 
@@ -52,9 +52,9 @@ boolean boilLED = false;
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 
 //**************** BUZZER ****************/
-int buzzerPin = 12;
+int buzzerPin = 11;
 int notes[] = {  // Notes in the melody:
-  NOTE_A6
+  NOTE_C8
  };
 
 int notesSize = sizeof(notes) / sizeof(int);
