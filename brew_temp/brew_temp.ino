@@ -1,13 +1,12 @@
 /* TODO:
    * Implement LED temp/time scale (blue/green/yellow/red);.
-   * Implement function that beeps when target temp is achieved. Need a way to reset/mute beep. 
    * Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
  */
 
 #include <OneWire.h>
 #include <DallasTemperature.h>
 #include <LiquidCrystal.h>
-#include "pitches.h"
+#include <Pitches.h>
 
 /********** SENSORS **********/
 // DS18B20 Pinout (Left to Right, pins down, flat side toward you)
