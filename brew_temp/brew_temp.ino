@@ -1,34 +1,52 @@
-/* TODO: 
-    1) Implement LED temp/time scale (blue/green/yellow/red);.
-    2) Implement function that beeps when target temp is achieved. Need a way to reset/mute beep.
-    3) Implement second temp sensor to LCD
-    4) Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
-*/
+/* TODO:
+   * Implement LED temp/time scale (blue/green/yellow/red);.
+   * Implement function that beeps when target temp is achieved. Need a way to reset/mute beep. 
+   * Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
+ */
 
 #include <OneWire.h>
-#include <LiquidCrystal.h>
 #include <DallasTemperature.h>
+#include <LiquidCrystal.h>
 
-/********** SENSOR **********/
-// Both data lines are in paralell
-// Address A: 0x28, 0xE7, 0x30, 0x06, 0x06, 0x00, 0x00, 0xEE
-// Address B: 0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58
+/********** SENSORS **********/
+// DS18B20 Pinout (Left to Right, pins down, flat side toward you)
+//  - Left   = Ground
+//  - Center = Signal (with 3.3K to 4.7K resistor to +5 or +3.3 )
+//  - Right  = +5 or +3.3 V
+// Note: When chained together, all Signal pins parallel on same wire. Resistor still
+// connected b/t Signal and +5 as noted above. Ground and +5 pins both hooked up to
+// Ground line (nothing on +5 line, other than resistor connected to Signal line
 
-int sensorPin = 11;
+// See DS18B20_find_address sketch to find these:
+// Sensor A: 0x28, 0xE7, 0x30, 0x06, 0x06, 0x00, 0x00, 0xEE
+// Sensor B: 0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58
+
+// Define data pin for OneWire bus (all sensors parallel on this pin)
+#define ONE_WIRE_BUS_PIN 11
 // Instantiate OneWire object
-OneWire ds(sensorPin);
+OneWire ds(ONE_WIRE_BUS_PIN);
+
+// Pass our OneWire reference to Dallas Temperature.
+DallasTemperature sensors(&ds);
+
+// See DS18B20_find_address sketch to find these
+DeviceAddress SensorA = { 
+  0x28, 0xE7, 0x30, 0x06, 0x06, 0x00, 0x00, 0xEE 
+}; 
+DeviceAddress SensorB = { 
+  0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58 
+};
 
 /********** LED **********/
-// LED pin
 int ledPin = 10;
-// Turn on LED when <t> reaches this target temp(F)
-int targetTemp = 82;
-boolean ledState = false;
+// Turn on LED when boil temp reach target(F)
+int boilTarget = 82;
+boolean boilLED = false;
 
 /********** LCD DISPLAY **********/
 // Pin name on LCD:     { VSS, VDD, VO,       RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
-// Pin name on Arduino: { Grd, Vcc, 10k pot*, 4,  Gnd, 5, NA, NA, NA, NA, 6,  7,  8,  9,  Vcc, Grd }
-// *10k pot uses ground-to-ground and wiper-to VO pin on LCD shield
+// Pin name on Arduino: { Grd, Vcc, 50k pot*, 4,  Gnd, 5, NA, NA, NA, NA, 6,  7,  8,  9,  Vcc, Grd }
+// *50k pot uses ground-to-ground and wiper-to VO pin on LCD shield
 
 // Initialize LCD Display object
 LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
@@ -36,13 +54,19 @@ LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
 void setup() 
 {
   Serial.begin(9600);
+  // Fire up LCD (16 chars wide, 2 rows deep)
   lcd.begin(16, 2);
 
+  // Fire up the sensors
+  sensors.begin();
+  // Set the resolution to 10 bit (Can be 9 to 12 bits .. lower is faster)
+  sensors.setResolution(SensorA, 10);
+  sensors.setResolution(SensorB, 10); 
+
   // Pin setup
-  //pinMode(sensorPin, INPUT);
   pinMode(ledPin, OUTPUT);
 
-  // Print status
+  // Print boot message
   lcd.clear();
   digitalWrite(ledPin, HIGH);
   lcd.print("* Bebop Robot *");
@@ -51,12 +75,17 @@ void setup()
   lcd.print("Let's Brew This!");
   delay(2000);
   lcd.clear();
+  
+  Serial.print("Initializing Temperature Control Library Version ");
+  Serial.println(DALLASTEMPLIBVERSION);
+  Serial.print("Number of Devices found on bus = ");  
+  Serial.println(sensors.getDeviceCount());
 }// End Setup
 
 void loop() 
 {
   // Reset LED and LCD display
-  if (ledState == false)
+  if (boilLED == false)
   {
     digitalWrite(ledPin, LOW);
   }
@@ -66,88 +95,53 @@ void loop()
   }
   lcd.setCursor(0, 0);
 
-  // Read sensor here.
-  float readTemp = getTemp();
+  Serial.println("Getting temperatures... ");   
 
-  // Validate reading and print to Serial
-  if (isnan(readTemp)) 
-  {
-    Serial.println("Failed to read temp!");
-  }
-  else
-  {
-    float temp = (readTemp * 9.0 / 5.0) + 32.0;
-    // Print temp to Serial
-    Serial.print("Temperature: ");
-    Serial.print(temp);
-    Serial.println(" *F");
-    
-    // Print temp to LCD
-    lcd.print("Boil: ");
-    lcd.print(temp);
-    lcd.print(" ");
-    
-    // Check if targetTemp is achieved; turn on LED if so
-    if (temp >= targetTemp) 
-    {
-      ledState = true;
-      // TODO: Beep
-    }
-    else
-    {
-      ledState = false;
-    }
-  }
+  // Command all devices on bus to read temperature  
+  sensors.requestTemperatures();  
+  
+  // Read temps
+  float tempBoil = readTemp(SensorA);
+  float tempMash = readTemp(SensorB);
+  
+  // Print temps to Serial
+  Serial.print("Boil Temp: ");
+  Serial.print(tempBoil);
+  Serial.println(" *F");
+
+  Serial.print("Mash Temp: ");
+  Serial.print(tempMash);
+  Serial.println(" *F");
+
+  // Print temps to LCD
+  lcd.print("Boil: ");
+  lcd.print(tempBoil);
+  lcd.print(" *F");
+  lcd.setCursor(0, 1);
+
+  lcd.print("Mash: ");
+  lcd.print(tempMash);
+  lcd.print(" *F");
+  
+  // Check if boilTarget is achieved; turn on LED if so
+   if (tempBoil >= boilTarget) 
+   {
+   boilLED = true;
+   // TODO: Beep
+   }
+   else
+   {
+   boilLED = false;
+   }
   delay(1000);
-}// End Main Loop
+}// End Main Loop 
 
-
-// Returns the temp from DS18B20 in DEG Celsius
-float getTemp()
+float readTemp(DeviceAddress deviceAddress)
 {
-  byte data[12];
-  byte addr[8];
-  
-  // If no more sensors on the chain, reset search
-  if (!ds.search(addr))
-  {
-    ds.reset_search();
-    return -1000;
-  }
-  
-  if (OneWire::crc8(addr, 7) != addr[7])
-  {
-    Serial.println("CRC is not valid!");
-    return -1000;
-  }
-  
-  if (addr[0] != 0x10 && addr[0] != 0x28)
-  {
-    Serial.println("Device is not recognized!");
-    return -1000;
-  }
-  
-  ds.reset();
-  ds.select(addr);
-  // Start conversion, w/ parasite power on at the end (IDK WFT this means)
-  ds.write(0x44, 1);
-  
-  byte present = ds.reset();
-  ds.select(addr);
-  ds.write(0xBE); // Read Scratchpad
-  
-  for (int i = 0; i < 9; i++) 
-  {
-    data[i] = ds.read();
-  }
-  
-  ds.reset_search();
-  
-  byte MSB = data[1];
-  byte LSB = data[0];
-  
-  float tempRead = ((MSB << 8) | LSB); // Using 2's compliment
-  float TemperatureSum = tempRead / 16;
-  
-  return TemperatureSum;
-}
+  float tempC = sensors.getTempC(deviceAddress);
+  float tempF = DallasTemperature::toFahrenheit(tempC);
+  return tempF;
+} // END readTemp() method
+
+
+

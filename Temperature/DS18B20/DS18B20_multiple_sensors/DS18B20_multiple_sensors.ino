@@ -88,3 +88,10 @@ void printTemperature(DeviceAddress deviceAddress)
     Serial.print(DallasTemperature::toFahrenheit(tempC));
   }
 } // END printTemperature() method
+
+/* Sample Output
+Number of Devices found on bus = 2
+Getting temperatures... 
+Probe A temperature is:   C: 23.25 F: 73.85
+Probe B temperature is:   C: 22.25 F: 72.05
+*/
