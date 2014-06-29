@@ -1,18 +1,18 @@
 /* TODO: 
     1) Implement LED temp/time scale (blue/green/yellow/red);.
     2) Implement function that beeps when target temp is achieved. Need a way to reset/mute beep.
-    3) Implement second temp sensor.
+    3) Implement second temp sensor to LCD
     4) Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
 */
 
 #include <OneWire.h>
 #include <LiquidCrystal.h>
+#include <DallasTemperature.h>
 
 /********** SENSOR **********/
-// DS18B20 sensor pin.
+// Both data lines are in paralell
 // Address A: 0x28, 0xE7, 0x30, 0x06, 0x06, 0x00, 0x00, 0xEE
 // Address B: 0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58
-
 
 int sensorPin = 11;
 // Instantiate OneWire object
@@ -79,7 +79,7 @@ void loop()
     float temp = (readTemp * 9.0 / 5.0) + 32.0;
     // Print temp to Serial
     Serial.print("Temperature: ");
-    Serial.println(temp);
+    Serial.print(temp);
     Serial.println(" *F");
     
     // Print temp to LCD
