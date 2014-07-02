@@ -1,23 +1,44 @@
 /*
 Adafruit Arduino - Lesson 3. RGB LED
+Note: Radio Shack sells common anode versions. So, with the flat side to the left, the pin-out is as follows:
+    ______
+   |      |
+   |      |
+  _|      |_
+ |__________)
+   | |  | |
+   | |  | |
+   | |  | |
+   | |  | |
+   | |  | |
+   R A* B G
+   E    L R
+   D    U E
+        E E
+          N
+* Common Anode to +5V!
+* Red: 220 Ohm resistor
+* Blue/Green: 100 Ohm resistor
+* All 3 pins must be on a PWM pin to work    
 */
 
-int redPin = 3;
-int bluePin = 10;
-int greenPin = 11;
+int redPin = 11;
+int greenPin = 10;
+int bluePin = 9;
 
 //uncomment this line if using a Common Anode LED
-//#define COMMON_ANODE
+#define COMMON_ANODE
 
 void setup()
 {
   pinMode(redPin, OUTPUT);
   pinMode(greenPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);  
+  pinMode(bluePin, OUTPUT);
 }
 
 void loop()
 {
+  //analogWrite(redPin, 255);
   setColor(255, 0, 0);  // red
   delay(1000);
   setColor(0, 255, 0);  // green
@@ -41,5 +62,5 @@ void setColor(int red, int green, int blue)
   #endif
   analogWrite(redPin, red);
   analogWrite(greenPin, green);
-  analogWrite(bluePin, blue);  
+  analogWrite(bluePin, blue);
 }

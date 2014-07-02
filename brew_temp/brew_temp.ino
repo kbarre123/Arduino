@@ -38,21 +38,21 @@ DeviceAddress SensorB = {
 };
 
 /********** LED **********/
-int ledPin = 10;
+int ledPin = 11;
 // Turn on LED when boil temp reach target(F)
-int boilTarget = 82;
+int boilTarget = 91;
 boolean boilLED = false;
 
 /********** LCD DISPLAY **********/
 // Pin name on LCD:     { VSS, VDD, VO,       RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
-// Pin name on Arduino: { Grd, Vcc, 50k pot*, 4,  Gnd, 5, NA, NA, NA, NA, 6,  7,  8,  9,  Vcc, Grd }
+// Pin name on Arduino: { Grd, Vcc, 50k pot*, 2,  Gnd, 3, NA, NA, NA, NA, 4,  5,  6,  7,  Vcc, Grd }
 // *50k pot uses ground-to-ground and wiper-to VO pin on LCD shield
 
 // Initialize LCD Display object
-LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
+LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
 //**************** BUZZER ****************/
-int buzzerPin = 11;
+int buzzerPin = 8;
 int notes[] = {  // Notes in the melody:
   NOTE_C8
  };
