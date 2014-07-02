@@ -132,6 +132,7 @@ void loop()
   lcd.print(tempMash);
   lcd.print(" *F");
 
+  // Test temp and indicate accordingly
   if (tempBoil <= 84)
   {
     setColor(0, 0, 255);
@@ -169,5 +170,3 @@ void setColor(int red, int green, int blue)
   analogWrite(greenPin, green);
   analogWrite(bluePin, blue);
 } // END setColor() method
-
-
