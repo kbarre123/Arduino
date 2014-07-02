@@ -37,10 +37,13 @@ DeviceAddress SensorB = {
   0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58 
 };
 
-/********** LED **********/
-int ledPin = 11;
+/********** RGB LED **********/
+// See LED_RGB sketch for pinout and resistor documentation
+int redPin = 11;
+int greenPin = 10;
+int bluePin = 9;
 // Turn on LED when boil temp reach target(F)
-int boilTarget = 91;
+int boilTarget = 85;
 boolean boilLED = false;
 
 /********** LCD DISPLAY **********/
@@ -76,11 +79,13 @@ void setup()
   sensors.setResolution(SensorB, 10); 
 
   // Pin setup
-  pinMode(ledPin, OUTPUT);
+  pinMode(redPin, OUTPUT);
+  pinMode(greenPin, OUTPUT);
+  pinMode(bluePin, OUTPUT);
 
   // Print boot message
   lcd.clear();
-  digitalWrite(ledPin, HIGH);
+  setColor(255, 0, 0);
   lcd.print("* Bebop Robot *");
   delay(2000);
   lcd.setCursor(0, 1);
@@ -131,12 +136,11 @@ void loop()
   // Check if boilTarget is achieved; turn on LED if so
    if (tempBoil < boilTarget) 
    {
-     digitalWrite(ledPin, LOW);
-     // TODO: Beep
+     setColor(0, 0, 255);
    }
    else
    {
-     digitalWrite(ledPin, HIGH);
+     setColor(255, 0, 0);
      for (int i = 0; i < notesSize ; i++) {
        int notesDuration = 1000/notesLength[i];
        tone(buzzerPin, notes[i], notesDuration);
@@ -151,6 +155,16 @@ float readTemp(DeviceAddress deviceAddress)
   float tempF = DallasTemperature::toFahrenheit(tempC);
   return tempF;
 } // END readTemp() method
+
+void setColor(int red, int green, int blue)
+{
+  red = 255 - red;
+  green = 255 - green;
+  blue = 255 - blue;
+  analogWrite(redPin, red);
+  analogWrite(greenPin, green);
+  analogWrite(bluePin, blue);
+}
 
 
 
