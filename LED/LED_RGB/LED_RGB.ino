@@ -64,3 +64,7 @@ void setColor(int red, int green, int blue)
   analogWrite(greenPin, green);
   analogWrite(bluePin, blue);
 }
+
+
+
+| | | |

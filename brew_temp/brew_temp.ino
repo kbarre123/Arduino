@@ -1,6 +1,6 @@
 /* TODO:
-   * Implement LED temp/time scale (blue/green/yellow/red);.
-   * Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
+ * Implement LED temp/time scale (blue/green/yellow/red);.
+ * Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
  */
 
 #include <OneWire.h>             // Get 1-wire Library here: http://www.pjrc.com/teensy/td_libs_OneWire.html
@@ -44,7 +44,6 @@ int greenPin = 10;
 int bluePin = 9;
 // Turn on LED when boil temp reach target(F)
 int boilTarget = 85;
-boolean boilLED = false;
 
 /********** LCD DISPLAY **********/
 // Pin name on LCD:     { VSS, VDD, VO,       RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
@@ -58,7 +57,7 @@ LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 int buzzerPin = 8;
 int notes[] = {  // Notes in the melody:
   NOTE_C8
- };
+};
 
 int notesSize = sizeof(notes) / sizeof(int);
 
@@ -92,13 +91,13 @@ void setup()
   lcd.print("Let's Brew This!");
   delay(2000);
   lcd.clear();
-  
+
   Serial.print("Initializing Temperature Control Library Version ");
   Serial.println(DALLASTEMPLIBVERSION);
   Serial.print("Number of Devices found on bus = ");  
   Serial.println(sensors.getDeviceCount());
-  
-}// End Setup
+
+}// End setup()
 
 void loop() 
 {
@@ -109,11 +108,11 @@ void loop()
 
   // Command all devices on bus to read temperature  
   sensors.requestTemperatures();  
-  
+
   // Read temps
   float tempBoil = readTemp(SensorA);
   float tempMash = readTemp(SensorB);
-  
+
   // Print temps to Serial
   Serial.print("Boil Temp: ");
   Serial.print(tempBoil);
@@ -132,22 +131,27 @@ void loop()
   lcd.print("Mash: ");
   lcd.print(tempMash);
   lcd.print(" *F");
-  
-  // Check if boilTarget is achieved; turn on LED if so
-   if (tempBoil < boilTarget) 
-   {
-     setColor(0, 0, 255);
-   }
-   else
-   {
-     setColor(255, 0, 0);
-     for (int i = 0; i < notesSize ; i++) {
-       int notesDuration = 1000/notesLength[i];
-       tone(buzzerPin, notes[i], notesDuration);
-     }
-   }
+
+  if (tempBoil <= 84)
+  {
+    setColor(0, 0, 255);
+  }
+  else if ( (84 < tempBoil) && (tempBoil <= 85) )
+  {
+    setColor(0, 255, 0);  
+  }
+  else
+  {
+    setColor(255, 0, 0);
+    for (int i = 0; i < notesSize ; i++) 
+    {
+      int notesDuration = 1000/notesLength[i];
+      tone(buzzerPin, notes[i], notesDuration);
+    }
+  }
+
   delay(1000);
-}// End Main Loop 
+}// End main()
 
 float readTemp(DeviceAddress deviceAddress)
 {
@@ -164,7 +168,6 @@ void setColor(int red, int green, int blue)
   analogWrite(redPin, red);
   analogWrite(greenPin, green);
   analogWrite(bluePin, blue);
-}
-
+} // END setColor() method
 
 
