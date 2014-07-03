@@ -161,7 +161,7 @@ void printTemps()
   lcd.print("Mash: ");
   lcd.print(tempMash);
   lcd.print(" *F");
-}
+} // END
 
 /** 
  * Set the LED to a particular RGB value.
