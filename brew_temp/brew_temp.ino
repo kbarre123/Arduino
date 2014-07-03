@@ -100,43 +100,21 @@ void setup()
   Serial.println(DALLASTEMPLIBVERSION);
   Serial.print("Number of Devices found on bus = ");  
   Serial.println(sensors.getDeviceCount());
+  Serial.println("Getting temperatures... ");
 
 }// End setup()
 
 void loop() 
 {
-  // Reset LCD display
-  lcd.setCursor(0, 0);
-
-  Serial.println("Getting temperatures... ");   
-
   // Command all devices on bus to read temperature  
-  sensors.requestTemperatures();  
-
-  // Read temps
+  sensors.requestTemperatures();
   tempBoil = readTemp(SensorA);
   tempMash = readTemp(SensorB);
 
-  // Print temps to Serial
-  Serial.print("Boil Temp: ");
-  Serial.print(tempBoil);
-  Serial.println(" *F");
-
-  Serial.print("Mash Temp: ");
-  Serial.print(tempMash);
-  Serial.println(" *F");
-
-  // Print temps to LCD
-  lcd.print("Boil: ");
-  lcd.print(tempBoil);
-  lcd.print(" *F");
-  lcd.setCursor(0, 1);
-
-  lcd.print("Mash: ");
-  lcd.print(tempMash);
-  lcd.print(" *F");
+  // Print temps to Serial & LCD
+  printTemps();
   
-  // Test temp and indicate accordingly
+  // Test temp and indicate (LED & buzzer) accordingly
   indicate(tempBoil);
   
   delay(1000);
@@ -159,6 +137,32 @@ float readTemp(DeviceAddress deviceAddress)
   return tempF;
 } // END
 
+/**
+ * Print temperatures to Serial & LCD.
+ */
+void printTemps()
+{
+  // Print temps to Serial
+  Serial.print("Boil Temp: ");
+  Serial.print(tempBoil);
+  Serial.println(" *F");
+
+  Serial.print("Mash Temp: ");
+  Serial.print(tempMash);
+  Serial.println(" *F");
+
+  // Print temps to LCD
+  lcd.setCursor(0, 0);
+  lcd.print("Boil: ");
+  lcd.print(tempBoil);
+  lcd.print(" *F");
+  lcd.setCursor(0, 1);
+
+  lcd.print("Mash: ");
+  lcd.print(tempMash);
+  lcd.print(" *F");
+}
+
 /** 
  * Set the LED to a particular RGB value.
  * @param red, green and blue values.
@@ -179,15 +183,15 @@ void setColor(int red, int green, int blue)
  */
 void indicate(float temp)
 {
-  temp = tempBoil;
+  float readTemp = temp;
   
-  if (tempBoil <= 84)
+  if (readTemp <= 84)
   {
     setColor(0, 0, 255);
   }
-  else if ( (84 < tempBoil) && (tempBoil <= 85) )
+  else if ( (84 < readTemp) && (readTemp <= 85) )
   {
-    setColor(0, 255, 0);  
+    setColor(0, 255, 0);
   }
   else
   {
