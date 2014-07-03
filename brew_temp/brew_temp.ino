@@ -42,18 +42,22 @@ DeviceAddress SensorB = {
 int redPin = 11;
 int greenPin = 10;
 int bluePin = 9;
-// Turn on LED when boil temp reach target(F)
+// Turn on LED when boil temp reaches target(F)
 int boilTarget = 85;
+// Declare global variables for use in loop() and indicate() methods
+float tempBoil;
+float tempMash;
 
 /********** LCD DISPLAY **********/
 // Pin name on LCD:     { VSS, VDD, VO,       RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
-// Pin name on Arduino: { Grd, Vcc, 50k pot*, 2,  Gnd, 3, NA, NA, NA, NA, 4,  5,  6,  7,  Vcc, Grd }
+// Pin name on Arduino: { Gnd, Vcc, 50k pot*, 2,  Gnd, 3, NA, NA, NA, NA, 4,  5,  6,  7,  Vcc, Grd }
 // *50k pot uses ground-to-ground and wiper-to VO pin on LCD shield
 
 // Initialize LCD Display object
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
 //**************** BUZZER ****************/
+// Hook Grd on buzzer to Grd, other to pin; no resistor used
 int buzzerPin = 8;
 int notes[] = {  // Notes in the melody:
   NOTE_C8
@@ -110,8 +114,8 @@ void loop()
   sensors.requestTemperatures();  
 
   // Read temps
-  float tempBoil = readTemp(SensorA);
-  float tempMash = readTemp(SensorB);
+  tempBoil = readTemp(SensorA);
+  tempMash = readTemp(SensorB);
 
   // Print temps to Serial
   Serial.print("Boil Temp: ");
@@ -131,8 +135,52 @@ void loop()
   lcd.print("Mash: ");
   lcd.print(tempMash);
   lcd.print(" *F");
-
+  
   // Test temp and indicate accordingly
+  indicate(tempBoil);
+  
+  delay(1000);
+}// End loop()
+
+
+
+
+/********** USER DEFINED METHODS **********/
+
+/** 
+ * Read temperatures from sensors.
+ * @param the address of the sensor to be read.
+ * @return the temperature, in Ferenheit.
+ */
+float readTemp(DeviceAddress deviceAddress)
+{
+  float tempC = sensors.getTempC(deviceAddress);
+  float tempF = DallasTemperature::toFahrenheit(tempC);
+  return tempF;
+} // END
+
+/** 
+ * Set the LED to a particular RGB value.
+ * @param red, green and blue values.
+ */
+void setColor(int red, int green, int blue)
+{
+  red = 255 - red;
+  green = 255 - green;
+  blue = 255 - blue;
+  analogWrite(redPin, red);
+  analogWrite(greenPin, green);
+  analogWrite(bluePin, blue);
+} // END
+
+/** 
+ * Test the temperature and indicate accordingly.
+ * @param temperature.
+ */
+void indicate(float temp)
+{
+  temp = tempBoil;
+  
   if (tempBoil <= 84)
   {
     setColor(0, 0, 255);
@@ -150,22 +198,4 @@ void loop()
       tone(buzzerPin, notes[i], notesDuration);
     }
   }
-  delay(1000);
-}// End main()
-
-float readTemp(DeviceAddress deviceAddress)
-{
-  float tempC = sensors.getTempC(deviceAddress);
-  float tempF = DallasTemperature::toFahrenheit(tempC);
-  return tempF;
-} // END readTemp() method
-
-void setColor(int red, int green, int blue)
-{
-  red = 255 - red;
-  green = 255 - green;
-  blue = 255 - blue;
-  analogWrite(redPin, red);
-  analogWrite(greenPin, green);
-  analogWrite(bluePin, blue);
-} // END setColor() method
+}// END
