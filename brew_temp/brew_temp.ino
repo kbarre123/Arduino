@@ -42,9 +42,8 @@ DeviceAddress SensorB = {
 #define RED_PIN 11
 #define GREEN_PIN 10
 #define BLUE_PIN 9
-// Turn on LED when boil temp reaches target(F)
-int boilTarget = 85;
-// Declare global variables for use in loop() and indicate() methods
+
+// Vars to store temps read from sensors
 float tempBoil;
 float tempMash;
 
@@ -56,7 +55,7 @@ float tempMash;
 // Initialize LCD Display object
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
-//**************** BUZZER ****************/
+/**************** BUZZER ****************/
 // Hook Grd on buzzer to Grd, other to pin; no resistor used
 #define buzzerPin 8
 int notes[] = {  // Notes in the melody:
@@ -68,6 +67,20 @@ int notesSize = sizeof(notes) / sizeof(int);
 int notesLength[] = {  // Note durations: 4 = quarter note, 8 = eighth note, etc.:
   4
 };
+
+/******* SWITCH B/T 5 & 10 GALLON BATCHES *******/
+// Define switch pin
+#define SWITCH_PIN 13
+
+// Var to store which boil target, depending on size of batch (10 vs. 5 gallons). See switch statement.
+int boilTarget;
+int batchSize;
+
+// Var to store "room temp" for use in calculation of indicator intervals
+#define ROOM_TEMP 80
+
+// Var to store indicator interval step sizes
+int indicatorStep;
 
 void setup() 
 {
@@ -81,11 +94,42 @@ void setup()
   sensors.setResolution(SensorA, 10);
   sensors.setResolution(SensorB, 10); 
 
-  // Pin setup
+  // Declare pin modes
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
+  pinMode(SWITCH_PIN, INPUT);
 
+  Serial.print("Initializing Temperature Control Library Version ");
+  Serial.println(DALLASTEMPLIBVERSION);
+  Serial.print("Number of Devices found on bus = ");  
+  Serial.println(sensors.getDeviceCount());
+  Serial.println("");
+  
+  // Depending on state of toggle-switch, boilTarget is assigned a different value
+  // to compensate for different temps needed to brew a 10 vs. 5 gallon batch.
+  switch (digitalRead(SWITCH_PIN)) 
+  {
+    case 0:
+      // If switch is set to 10 gallons, boilTarget is this
+      boilTarget = 88;
+      batchSize = 10;
+      break;
+    case 1:
+      // If switch is set to 5 gallons, boilTarget is this
+      boilTarget = 85;
+      batchSize = 5;
+      break;
+    default: 
+      // Otherwise, boilTarget is this
+      boilTarget = 170;
+      batchSize = 5;
+  } // END
+  
+  // This presumes 3 LED states: > boilTarget = red; > indicatorStep = green; else blue.
+  // Would have to change this formula if more indication steps are needed.
+  indicatorStep = (boilTarget - ROOM_TEMP) / 2;
+  
   // Print boot message
   lcd.clear();
   setColor(255, 0, 0);
@@ -95,12 +139,40 @@ void setup()
   lcd.print("Let's Brew This!");
   delay(2000);
   lcd.clear();
+  
+  // Print boot message to Serial
+  Serial.print("Batch Size: ");
+  Serial.print(batchSize);
+  Serial.println(" gal.");
+  
+  Serial.print("boilTarget: ");
+  Serial.print(boilTarget);
+  Serial.println(" *F");
+  Serial.println("");
+  
+  Serial.print("ROOM_TEMP: ");
+  Serial.print(ROOM_TEMP);
+  Serial.println(" *F");
+  
+  // DEBUG: Keep only for initial debugging; delete once not needed
+  Serial.print("indicatorStep: ");
+  Serial.println(indicatorStep);
+  
+  Serial.print("SWITCH_PIN reading: ");
+  Serial.println(digitalRead(SWITCH_PIN));
+  // END DEBUG
 
-  Serial.print("Initializing Temperature Control Library Version ");
-  Serial.println(DALLASTEMPLIBVERSION);
-  Serial.print("Number of Devices found on bus = ");  
-  Serial.println(sensors.getDeviceCount());
+  // Print batch-specific variables on LCD
+  lcd.print("Target:  ");
+  lcd.print(boilTarget);
+  lcd.setCursor(0, 1);
+  lcd.print("Gallons: ");
+  lcd.print(batchSize);
+  delay(5000);
+  lcd.clear();
+  
   Serial.println("Getting temperatures... ");
+  Serial.println("");
 
 }// End setup()
 
@@ -143,13 +215,14 @@ float readTemp(DeviceAddress deviceAddress)
 void printTemps()
 {
   // Print temps to Serial
-  Serial.print("Boil Temp: ");
+  Serial.print("Boil Temp:   ");
   Serial.print(tempBoil);
   Serial.println(" *F");
 
-  Serial.print("Mash Temp: ");
+  Serial.print("Mash Temp:   ");
   Serial.print(tempMash);
   Serial.println(" *F");
+  Serial.println("");
 
   // Print temps to LCD
   lcd.setCursor(0, 0);
@@ -184,18 +257,19 @@ void setColor(int red, int green, int blue)
 void indicate(float temp)
 {
   float readTemp = temp;
+  int step1 = ROOM_TEMP + indicatorStep;
   
-  if (readTemp <= 84)
+  if (readTemp > (boilTarget))
   {
-    setColor(0, 0, 255);
+    setColor(255, 0, 0);
   }
-  else if ( (84 < readTemp) && (readTemp <= 85) )
+  else if ( readTemp > step1 )
   {
     setColor(0, 255, 0);
   }
   else
   {
-    setColor(255, 0, 0);
+    setColor(0, 0, 255);
     for (int i = 0; i < notesSize ; i++) 
     {
       int notesDuration = 1000/notesLength[i];
