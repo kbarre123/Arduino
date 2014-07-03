@@ -39,9 +39,9 @@ DeviceAddress SensorB = {
 
 /********** RGB LED **********/
 // See LED_RGB sketch for pinout and resistor documentation
-int redPin = 11;
-int greenPin = 10;
-int bluePin = 9;
+#define RED_PIN 11
+#define GREEN_PIN 10
+#define BLUE_PIN 9
 // Turn on LED when boil temp reaches target(F)
 int boilTarget = 85;
 // Declare global variables for use in loop() and indicate() methods
@@ -58,7 +58,7 @@ LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
 //**************** BUZZER ****************/
 // Hook Grd on buzzer to Grd, other to pin; no resistor used
-int buzzerPin = 8;
+#define buzzerPin 8
 int notes[] = {  // Notes in the melody:
   NOTE_C8
 };
@@ -82,9 +82,9 @@ void setup()
   sensors.setResolution(SensorB, 10); 
 
   // Pin setup
-  pinMode(redPin, OUTPUT);
-  pinMode(greenPin, OUTPUT);
-  pinMode(bluePin, OUTPUT);
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
 
   // Print boot message
   lcd.clear();
@@ -172,9 +172,9 @@ void setColor(int red, int green, int blue)
   red = 255 - red;
   green = 255 - green;
   blue = 255 - blue;
-  analogWrite(redPin, red);
-  analogWrite(greenPin, green);
-  analogWrite(bluePin, blue);
+  analogWrite(RED_PIN, red);
+  analogWrite(GREEN_PIN, green);
+  analogWrite(BLUE_PIN, blue);
 } // END
 
 /** 
