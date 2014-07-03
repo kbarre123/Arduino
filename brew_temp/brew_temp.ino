@@ -150,7 +150,6 @@ void loop()
       tone(buzzerPin, notes[i], notesDuration);
     }
   }
-
   delay(1000);
 }// End main()
 
