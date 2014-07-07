@@ -112,12 +112,12 @@ void setup()
   {
     case 0:
       // If switch is set to 10 gallons, boilTarget is this
-      boilTarget = 88;
+      boilTarget = 90;
       batchSize = 10;
       break;
     case 1:
       // If switch is set to 5 gallons, boilTarget is this
-      boilTarget = 85;
+      boilTarget = 86;
       batchSize = 5;
       break;
     default: 
@@ -262,6 +262,11 @@ void indicate(float temp)
   if (readTemp > (boilTarget))
   {
     setColor(255, 0, 0);
+    for (int i = 0; i < notesSize ; i++) 
+    {
+      int notesDuration = 1000/notesLength[i];
+      tone(buzzerPin, notes[i], notesDuration);
+    }
   }
   else if ( readTemp > step1 )
   {
@@ -270,10 +275,5 @@ void indicate(float temp)
   else
   {
     setColor(0, 0, 255);
-    for (int i = 0; i < notesSize ; i++) 
-    {
-      int notesDuration = 1000/notesLength[i];
-      tone(buzzerPin, notes[i], notesDuration);
-    }
   }
 }// END
