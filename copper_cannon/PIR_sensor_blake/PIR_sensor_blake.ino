@@ -17,7 +17,7 @@ void loop(){
   
   if (val == HIGH) {            // check if the input is HIGH
     digitalWrite(ledPin, HIGH); // turn LED ON
-    playTone(300, 160);
+    playTone(600, 440);
     delay(150);
     if (pirState == LOW) {
       pirState = HIGH;          // update current state of PIR
