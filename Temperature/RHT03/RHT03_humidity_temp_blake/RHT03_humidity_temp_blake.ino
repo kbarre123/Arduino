@@ -1,5 +1,6 @@
 // Example testing sketch for various DHT humidity/temperature sensors
 // Written by ladyada, public domain
+// http://chrisbaume.files.wordpress.com/2013/02/dht11wiring.gif
 
 #include "DHT.h"
 
@@ -38,8 +39,8 @@ void loop() {
     Serial.print(h);
     Serial.print(" %\t");
     Serial.print("Temperature: "); 
-    Serial.print((int)round(1.8*t+32));
-    //Serial.print(t);
+    //Serial.print((1.8*t+32));
+    Serial.print(t);
     Serial.println(" *F");
   }
 }
