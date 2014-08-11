@@ -1,6 +1,6 @@
 // Uses a PIR sensor to detect movement, buzzes a buzzer
  
-int ledPin = 7;                // choose the pin for the LED
+int ledPin = 5;                // choose the pin for the LED
 int inputPin = 6;               // choose the input pin (for PIR sensor)
 int pirState = LOW;             // we start, assuming no motion detected
 int val = 0;                    // variable for reading the pin status
