@@ -3,9 +3,9 @@
 * (e.g. pirState).
 */
 
-#define ledPin 13
-int pirState = 0; // sensor is 'off'/not being read
-int smsData = 0; // Value to represent an SMS message
+#define ledPin 5
+int pirState = LOW; // sensor is 'off'/not being read
+int smsData = 1; // Value to represent an SMS message
 
 void setup()
 {
@@ -17,17 +17,17 @@ void loop()
 {
   if( smsData > 0 )
   {
-    pirState = 1;
+    pirState = HIGH;
   }
   else
   {
-    pirState = 0;
+    pirState = LOW;
   }
   
-  if (pirState == 1) 
+  if (pirState == HIGH) 
   {
     digitalWrite(ledPin, HIGH);
-  } else if (pirState == 0)
+  } else if (pirState == LOW)
   {
     digitalWrite(ledPin, LOW);
   }
