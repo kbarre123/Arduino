@@ -24,7 +24,8 @@ OneWire ds(ONE_WIRE_BUS_PIN);
 // Pass our OneWire reference to Dallas Temperature.
 DallasTemperature sensors(&ds);
 
-// See DS18B20_find_address sketch to find these
+// See "DS18B20_find_address" sketch to find these. Each sensor will have their own address that needs
+// to be declared here.
 DeviceAddress SensorA = { 
   0x28, 0xE7, 0x30, 0x06, 0x06, 0x00, 0x00, 0xEE 
 }; 
@@ -33,25 +34,45 @@ DeviceAddress SensorB = {
 };
 
 /********** RGB LED **********/
-// See LED_RGB sketch for pinout and resistor documentation
+/*Note: Radio Shack sells common anode versions. So, with the flat side to the left, the pin-out is as follows:
+    ______
+   |      |
+   |      |
+  _|      |_
+ |__________)
+   | |  | |
+   | |  | |
+   | |  | |
+   | |  | |
+   | |  | |
+   R A* B G
+   E    L R
+   D    U E
+        E E
+          N
+* A* = Common Anode to +5V
+* Red: 220 Ohm resistor,then to pin
+* Blue/Green: 100 Ohm resistor,then to pin
+* All 3 pins must be on a PWM pin to work (denoted by a '~' next to their pin number on the board   
+*/
 #define RED_PIN 11
 #define GREEN_PIN 10
 #define BLUE_PIN 9
 
 // Vars to store temps read from sensors
-float tempBoil;
-float tempMash;
+float temp01;
+float temp02;
 
 /********** LCD DISPLAY **********/
-// Pin name on LCD:     { VSS, VDD, VO,       RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
-// Pin name on Arduino: { Gnd, Vcc, 50k pot*, 2,  Gnd, 3, NA, NA, NA, NA, 4,  5,  6,  7,  Vcc, Grd }
-// *50k pot uses ground-to-ground and wiper-to VO pin on LCD shield
+// Pin name on LCD:     { VSS, VDD, VO,        RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
+// Pin name on Arduino: { Gnd, Vcc, *resistor, 2,  Gnd, 3, NA, NA, NA, NA, 4,  5,  6,  7,  Vcc, Grd }
+// *I forget which resistor we would up using to make the screen contrast work. Would have to experiment -__-
 
 // Initialize LCD Display object
 LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
 /**************** BUZZER ****************/
-// Hook Grd on buzzer to Grd, other to pin; no resistor used
+// Hook Ground on buzzer to Ground, other one to your pin on the board; no resistor necessary
 #define buzzerPin 8
 int notes[] = {  // Notes in the melody:
   NOTE_C8
@@ -63,13 +84,7 @@ int notesLength[] = {  // Note durations: 4 = quarter note, 8 = eighth note, etc
   4
 };
 
-/******* SWITCH B/T 5 & 10 GALLON BATCHES *******/
-// Define switch pin
-#define SWITCH_PIN 13
-
-// Var to store which boil target, depending on size of batch (10 vs. 5 gallons). See switch statement.
-int boilTarget;
-int batchSize;
+int tempTarget01 = 90;
 
 // Var to store "room temp" for use in calculation of indicator intervals
 #define ROOM_TEMP 80
@@ -93,7 +108,6 @@ void setup()
   pinMode(RED_PIN, OUTPUT);
   pinMode(GREEN_PIN, OUTPUT);
   pinMode(BLUE_PIN, OUTPUT);
-  pinMode(SWITCH_PIN, INPUT);
 
   Serial.print("Initializing Temperature Control Library Version ");
   Serial.println(DALLASTEMPLIBVERSION);
@@ -101,47 +115,20 @@ void setup()
   Serial.println(sensors.getDeviceCount());
   Serial.println("");
   
-  // Depending on state of toggle-switch, boilTarget is assigned a different value
-  // to compensate for different temps needed to brew a 10 vs. 5 gallon batch.
-  switch (digitalRead(SWITCH_PIN)) 
-  {
-    case 0:
-      // If switch is set to 10 gallons, boilTarget is this
-      boilTarget = 90;
-      batchSize = 10;
-      break;
-    case 1:
-      // If switch is set to 5 gallons, boilTarget is this
-      boilTarget = 86;
-      batchSize = 5;
-      break;
-    default: 
-      // Otherwise, boilTarget is this
-      boilTarget = 170;
-      batchSize = 5;
-  } // END
-  
-  // This presumes 3 LED states: > boilTarget = red; > indicatorStep = green; else blue.
+  // This presumes 3 LED states: > tempTarget01 = red; > indicatorStep = green; else blue.
   // Would have to change this formula if more indication steps are needed.
-  indicatorStep = (boilTarget - ROOM_TEMP) / 2;
+  indicatorStep = (tempTarget01 - ROOM_TEMP) / 2;
   
   // Print boot message
   lcd.clear();
-  setColor(255, 0, 0);
-  lcd.print("* Bebop Robot *");
-  delay(2000);
-  lcd.setCursor(0, 1);
-  lcd.print("Let's Brew This!");
+  //lcd.setCursor(0, 0);
+  lcd.print("*** Booting ***");
+  setColor(0, 255, 0);
   delay(2000);
   lcd.clear();
   
-  // Print boot message to Serial
-  Serial.print("Batch Size: ");
-  Serial.print(batchSize);
-  Serial.println(" gal.");
-  
-  Serial.print("boilTarget: ");
-  Serial.print(boilTarget);
+  Serial.print("tempTarget01: ");
+  Serial.print(tempTarget01);
   Serial.println(" *F");
   Serial.println("");
   
@@ -152,17 +139,10 @@ void setup()
   // DEBUG: Keep only for initial debugging; delete once not needed
   Serial.print("indicatorStep: ");
   Serial.println(indicatorStep);
-  
-  Serial.print("SWITCH_PIN reading: ");
-  Serial.println(digitalRead(SWITCH_PIN));
-  // END DEBUG
 
-  // Print batch-specific variables on LCD
-  lcd.print("Target:  ");
-  lcd.print(boilTarget);
-  lcd.setCursor(0, 1);
-  lcd.print("Gallons: ");
-  lcd.print(batchSize);
+  // Print tempTargets to LCD
+  lcd.print("Target 1:  ");
+  lcd.print(tempTarget01);
   delay(5000);
   lcd.clear();
   
@@ -175,16 +155,16 @@ void loop()
 {
   // Command all devices on bus to read temperature  
   sensors.requestTemperatures();
-  tempBoil = readTemp(SensorA);
-  tempMash = readTemp(SensorB);
+  temp01 = readTemp(SensorA);
+  temp02 = readTemp(SensorB);
 
   // Print temps to Serial & LCD
   printTemps();
   
   // Test temp and indicate (LED & buzzer) accordingly
-  indicate(tempBoil);
+  indicate(temp01);
   
-  delay(1000);
+  delay(500);
 }// End loop()
 
 
@@ -199,8 +179,7 @@ void loop()
  */
 float readTemp(DeviceAddress deviceAddress)
 {
-  float tempC = sensors.getTempC(deviceAddress);
-  float tempF = DallasTemperature::toFahrenheit(tempC);
+  float tempF = DallasTemperature::toFahrenheit(sensors.getTempC(deviceAddress));
   return tempF;
 } // END
 
@@ -210,24 +189,24 @@ float readTemp(DeviceAddress deviceAddress)
 void printTemps()
 {
   // Print temps to Serial
-  Serial.print("Boil Temp:   ");
-  Serial.print(tempBoil);
+  Serial.print("Tank 1:   ");
+  Serial.print(temp01);
   Serial.println(" *F");
 
-  Serial.print("Mash Temp:   ");
-  Serial.print(tempMash);
+  Serial.print("Tank 2:   ");
+  Serial.print(temp02);
   Serial.println(" *F");
   Serial.println("");
 
   // Print temps to LCD
   lcd.setCursor(0, 0);
-  lcd.print("Boil: ");
-  lcd.print(tempBoil);
+  lcd.print("Tank 1: ");
+  lcd.print(temp01);
   lcd.print(" *F");
   lcd.setCursor(0, 1);
 
-  lcd.print("Mash: ");
-  lcd.print(tempMash);
+  lcd.print("Tank 2: ");
+  lcd.print(temp02);
   lcd.print(" *F");
 } // END
 
@@ -251,24 +230,24 @@ void setColor(int red, int green, int blue)
  */
 void indicate(float temp)
 {
-  float readTemp = temp;
+  //float readTemp = temp;
   int step1 = ROOM_TEMP + indicatorStep;
   
-  if (readTemp > (boilTarget))
+  if (temp > (tempTarget01))
   {
-    setColor(255, 0, 0);
+    setColor(0, 255, 0); // Green
     for (int i = 0; i < notesSize ; i++) 
     {
       int notesDuration = 1000/notesLength[i];
       tone(buzzerPin, notes[i], notesDuration);
     }
   }
-  else if ( readTemp > step1 )
+  else if ( temp > step1 )
   {
-    setColor(0, 255, 0);
+    setColor(255, 255, 0); // Yellow
   }
   else
   {
-    setColor(0, 0, 255);
+    setColor(255, 0, 0); // Red
   }
 }// END
