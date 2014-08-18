@@ -11,7 +11,7 @@ SoftwareSerial SIM900(7, 8);
 
 // Define variables
 int pirState = LOW;  // sensor is 'off'/not being read
-//int val = LOW;     // variable for reading the PIR value
+int val = LOW;     // variable for reading the PIR value
 
 void setup()
 {
@@ -30,8 +30,8 @@ void setup()
   SIM900.print("AT+CNMI=2,2,0,0,0\r"); 
   // blurt out contents of new SMS upon receipt to the GSM shield's serial out
   delay(100);
-  //SIM900.println("AT+CMGD=1,4"); // delete all SMS
-  //delay(100);
+  SIM900.println("AT+CMGD=1,4"); // delete all SMS
+  delay(10);
 }
  
 void loop() 
@@ -46,50 +46,56 @@ void loop()
       inchar=SIM900.read(); 
       if (inchar=='N')
       { 
-        //digitalWrite(ledPin, HIGH);
+        //digitalWrite(ledPin, HIGH); // DEBUG
         pirState = HIGH;
         SIM900.println("AT+CMGD=1,4"); // delete all SMS
         delay(20);
+        Serial.println("ON received");
       } else if (inchar == 'F')  
       {
         delay(20);
         inchar=SIM900.read();
         if (inchar=='F')
         {
-          //digitalWrite(ledPin, LOW);
+          //digitalWrite(ledPin, LOW); // DEBUG
           pirState = LOW;
           delay(20);
           SIM900.println("AT+CMGD=1,4"); // delete all SMS
+          delay(20);
+          Serial.println("OFF received");
         }
       }
     }
   }// END OF AVAILABLE
   
-  // READ STATE OF PIR SENSOR
+  // Is sensor armed or not?
   if (pirState == HIGH) 
   {
-    digitalWrite(ledPin, HIGH); // turn LED on
-    
-    //val = digitalRead(sensorPin);  // read input value
-    //if (val == HIGH)
-    //{
+    //digitalWrite(ledPin, HIGH); // DEBUG
+    Serial.println("Sensor Armed!");
+    val = digitalRead(sensorPin);  // read input value
+    if (val == HIGH)
+    {
+      digitalWrite(ledPin, HIGH);
       //sendSMS();
-      //for (int i = 0; i < 2; i++) 
-      //{
-      //  playTone(600, 400);
-      //  delay(50);
-      //}
+      for (int i = 0; i < 2; i++) 
+      {
+        playTone(600, 400);
+        delay(50);
+      }
+      Serial.println("Motion detected");
       //delay(150);
-    //} else
-    //{
-      //playTone(0, 0);
-      //delay(100);    
-    //}
+    } else
+    {
+      digitalWrite(ledPin, LOW);
+      playTone(0, 0);
+    }
   } else if (pirState == LOW)
   {
-    digitalWrite(ledPin, LOW); // turn LED off
+    digitalWrite(ledPin, LOW); // DEBUG
+    Serial.println("Sensor Disarmed!");
   }
-  
+  delay(100);
 }// END OF MAIN LOOP
 
 // USER DEFINED FUNCTIONS
