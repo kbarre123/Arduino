@@ -8,9 +8,9 @@
 //  - Left   = Ground
 //  - Center = Signal (with 3.3K to 4.7K resistor to +5 or +3.3 )
 //  - Right  = +5 or +3.3 V
-// Note: When chained together, all Signal pins parallel on same wire. Resistor still
-// connected b/t Signal and +5 as noted above. All ground and +5 pins both hooked up to
-// Ground line (nothing on +5 line, other than resistor connected to Signal line).
+// Note: When chained together, all Signal pins parallel on same data wire (pin 12 in this case). Resistor still
+// connected b/t Signal and +5 as noted above. Ground and +5 pins both hooked up to
+// Ground line (nothing on +5 line, other than resistor connected to Signal line
 
 // See DS18B20_find_address sketch to find these:
 // Sensor A: 0x28, 0xE7, 0x30, 0x06, 0x06, 0x00, 0x00, 0xEE

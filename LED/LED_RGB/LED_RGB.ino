@@ -16,7 +16,7 @@ Note: Radio Shack sells common anode versions. So, with the flat side to the lef
    D    U E
         E E
           N
-* Common Anode to +5V!
+* A* = Common Anode to +5V
 * Red: 220 Ohm resistor
 * Blue/Green: 100 Ohm resistor
 * All 3 pins must be on a PWM pin to work    
@@ -64,7 +64,3 @@ void setColor(int red, int green, int blue)
   analogWrite(greenPin, green);
   analogWrite(bluePin, blue);
 }
-
-
-
-| | | |
