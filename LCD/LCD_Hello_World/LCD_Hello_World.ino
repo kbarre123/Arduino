@@ -30,7 +30,7 @@
 #include <LiquidCrystal.h>
 
 // initialize the library with the numbers of the interface pins
-LiquidCrystal lcd(7, 8, 9, 10, 11, 12);
+LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
 void setup() {
   // set up the LCD's number of columns and rows: 
