@@ -1,43 +1,30 @@
-// Draw Texts in the four directions of the TFT by Frankie.Chu
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License, or (at your option) any later version.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-/*
-    Modified record:
-    
-*/
+/**
+ * Seeedstudio LCD 2.8" TFT touchscreen
+ * Will display data from two temp sensors and has a countdown clock.
+ * Intended use if for the brew_bot.v2
+ */
 #include <stdint.h>
 #include <TouchScreen.h> 
 #include <TFT.h>
 #include <math.h>
 
 #ifdef SEEEDUINO
-  #define YP A2   // must be an analog pin, use "An" notation!
-  #define XM A1   // must be an analog pin, use "An" notation!
-  #define YM 14   // can be a digital pin, this is A0
-  #define XP 17   // can be a digital pin, this is A3 
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM 14   // can be a digital pin, this is A0
+#define XP 17   // can be a digital pin, this is A3 
 #endif
 
 #ifdef MEGA
-  #define YP A2   // must be an analog pin, use "An" notation!
-  #define XM A1   // must be an analog pin, use "An" notation!
-  #define YM 54   // can be a digital pin, this is A0
-  #define XP 57   // can be a digital pin, this is A3 
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM 54   // can be a digital pin, this is A0
+#define XP 57   // can be a digital pin, this is A3 
 #endif 
 
 /* DEBUG: These variables are temp and represent output of the DallasTemp sensors,
  * as converted from floats to char[] for display to the screen.
-*/
+ */
 float tempUpper = 125.65;
 float tempMash = 75.22;
 
@@ -57,7 +44,7 @@ void setup()
   Tft.init();  //init TFT library
   Tft.paintScreenBlack();  // Clear screen
   delay(1000);
-  
+
   Tft.setDisplayDirect(UP2DOWN);
   Tft.drawString("Upper: ",220,20,2,WHITE);
   Tft.drawString("Mash: ",180,20,2,WHITE);
@@ -85,14 +72,15 @@ void loop()
   //Serial.print("textMash: ");  // DEBUG
   //Serial.println(textMash);  // DEBUG
   //Serial.println("");  // DEBUG
-  
+
   currentMillis = millis();
   /* UPDATE TIMER */
   if(currentMillis - previousMillis > interval) 
   {
     // save the last time you updated Timer
     previousMillis = currentMillis;
-   
+
+
     if (currentMillis > benchMillis + MILLIS_IN_MINUTE) 
     {
       minute++;
@@ -103,30 +91,31 @@ void loop()
     {
       second = (currentMillis - benchMillis) / 1000;
     }
-    
+
     if (minute > 59) 
     {
       hour++;
       minute = 0;
     }
-    
+
     char textSecs[3];
     dtostrf(second,1,0,textSecs);
     Serial.print("textSecs: ");
     Serial.println(textSecs);
-    
+
     char textMins[3];
     dtostrf(minute,1,0,textMins);    
     Serial.print("textMins: ");
     Serial.println(textMins);
-    
+
     char textHours[3];
     dtostrf(hour,1,0,textHours);
     Serial.print("textHours: ");
     Serial.println(textHours);
-    
+
     // Concat char[]'s together since drawString only accepts one char[]
-    char temp[10] = {""};
+    char temp[10] = {
+      ""    };
     //(hours < leadingTenThreshold) ? strcat('0', textHours) : strcat(temp, textHours);
     strcat(temp, textHours);
     strcat(temp, ":");
@@ -137,10 +126,11 @@ void loop()
     strcat(temp, textSecs);
     Serial.println(temp);
     Serial.println("");
-    
+
     // Increment the displayed timer by 1 second
     Tft.drawString(temp,140,180,2,WHITE);
     delay(500);
     Tft.drawString(temp,140,180,2,BLACK);
   }
 }
+
