@@ -43,14 +43,13 @@ float tempMash = 75.22;
 
 // Variables for the timer
 long interval = 1000;  // Threshold at which to update the Timer
-long previousMillis = 0;  // Will store last time Timer was updated
 unsigned long currentMillis;  // current millis
+long previousMillis = 0;  // Will store last time Timer was updated
+unsigned long benchMillis = 0;
 int second = 0, minute = 0, hour = 0;
 
 // Constants to calculate printable time
-const long MILLIS_IN_HOUR= 3600000;
 const long MILLIS_IN_MINUTE = 60000;
-const long MILLIS_IN_SECOND = 1000;
 
 void setup()
 {
@@ -71,8 +70,6 @@ void setup()
 
 void loop()
 {
-  
-  currentMillis = millis();
   /* READ SENSORS AND DISPLAY */
   // Convert sensor data of Upper Pot to string for display. 
   char textUpper[8]; // buffer to store the results of dtostrf
@@ -89,17 +86,22 @@ void loop()
   //Serial.println(textMash);  // DEBUG
   //Serial.println("");  // DEBUG
   
+  currentMillis = millis();
   /* UPDATE TIMER */
   if(currentMillis - previousMillis > interval) 
   {
     // save the last time you updated Timer
     previousMillis = currentMillis;
-    
-    second++;
-    if (second > 59)
+   
+    if (currentMillis > benchMillis + MILLIS_IN_MINUTE) 
     {
       minute++;
       second = 0;
+      benchMillis += MILLIS_IN_MINUTE;
+    }
+    else
+    {
+      second = (currentMillis - benchMillis) / 1000;
     }
     
     if (minute > 59) 
@@ -138,6 +140,7 @@ void loop()
     
     // Increment the displayed timer by 1 second
     Tft.drawString(temp,140,180,2,WHITE);
+    delay(500);
     Tft.drawString(temp,140,180,2,BLACK);
   }
 }
