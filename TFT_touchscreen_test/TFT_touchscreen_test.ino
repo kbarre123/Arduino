@@ -116,13 +116,10 @@ void loop()
     // Concat char[]'s together since drawString only accepts one char[]
     char temp[10] = {
       ""    };
-    //(hours < leadingTenThreshold) ? strcat('0', textHours) : strcat(temp, textHours);
     strcat(temp, textHours);
     strcat(temp, ":");
-    //(mins < leadingTenThreshold) ? strcat('0', textMins) : strcat(temp, textMins);
     strcat(temp, textMins);
     strcat(temp, ":");
-    //(secs < leadingTenThreshold) ? strcat('0', textSecs) : strcat(temp, textSecs);
     strcat(temp, textSecs);
     Serial.println(temp);
     Serial.println("");
