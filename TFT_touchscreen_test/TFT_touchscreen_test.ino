@@ -31,7 +31,7 @@ float tempMash = 75.22;
 // Variables for the timer
 long interval = 1000;  // Threshold at which to update the Timer
 unsigned long currentMillis;  // current millis
-long previousMillis = 0;  // Will store last time Timer was updated
+unsigned long previousMillis = 0;  // Will store last time Timer was updated
 unsigned long benchMillis = 0;  // Variable used to be able to reset second to zero and still be able to keep track of time
 int second = 0, minute = 0, hour = 0;
 const long MILLIS_IN_MINUTE = 60000;  // Constant to calculate printable time
