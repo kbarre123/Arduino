@@ -33,7 +33,7 @@ long interval = 1000;  // Threshold at which to update the Timer
 unsigned long currentMillis;  // current millis
 unsigned long previousMillis = 0;  // Will store last time Timer was updated
 unsigned long benchMillis = 0;  // Variable used to be able to reset second to zero and still be able to keep track of time
-int second = 0, minute = 0, hour = 0;
+int second = 0, minute = 0, hour = 0; // Keep track of time so we can increment min/hours based on elapsed seconds
 const long MILLIS_IN_MINUTE = 60000;  // Constant to calculate printable time
 
 void setup()
@@ -96,7 +96,6 @@ void loop()
       hour++;
       minute = 0;
     }
-    
     
     char textHours[3];
     dtostrf(hour,1,0,textHours);
