@@ -4,7 +4,7 @@
  * Intended use if for the brew_bot.v2
  */
 #include <stdint.h>
-#include <TouchScreen.h> 
+//#include <TouchScreen.h> // Will be used to read touch events
 #include <TFT.h>
 #include <math.h>
 
@@ -32,18 +32,16 @@ float tempMash = 75.22;
 long interval = 1000;  // Threshold at which to update the Timer
 unsigned long currentMillis;  // current millis
 long previousMillis = 0;  // Will store last time Timer was updated
-unsigned long benchMillis = 0;
+unsigned long benchMillis = 0;  // Variable used to be able to reset second to zero and still be able to keep track of time
 int second = 0, minute = 0, hour = 0;
-
-// Constants to calculate printable time
-const long MILLIS_IN_MINUTE = 60000;
+const long MILLIS_IN_MINUTE = 60000;  // Constant to calculate printable time
 
 void setup()
 {
   Serial.begin(9600);
   Tft.init();  //init TFT library
   Tft.paintScreenBlack();  // Clear screen
-  delay(1000);
+  //delay(1000);
 
   Tft.setDisplayDirect(UP2DOWN);
   Tft.drawString("Upper: ",220,20,2,WHITE);
@@ -78,7 +76,7 @@ void loop()
   currentMillis = millis();
   if(currentMillis - previousMillis > interval) 
   {
-    // save the last time you updated Timer
+    // Save the last time you updated Timer
     previousMillis = currentMillis;
     
     /*** UPDATE TIMER COMPONENTS ***/
@@ -99,23 +97,27 @@ void loop()
       minute = 0;
     }
     
-    char textSecs[3];
-    dtostrf(second,1,0,textSecs);
-    Serial.print("textSecs: ");
-    Serial.println(textSecs);
-
-    char textMins[3];
-    dtostrf(minute,1,0,textMins);    
-    Serial.print("textMins: ");
-    Serial.println(textMins);
-
+    
     char textHours[3];
     dtostrf(hour,1,0,textHours);
-    Serial.print("textHours: ");
-    Serial.println(textHours);
+    Serial.print(textHours);
+    Serial.print(":");
+    
+    char textMins[3];
+    dtostrf(minute,1,0,textMins);    
+    Serial.print(textMins);
+    Serial.print(":");
+    
+    char textSecs[3];
+    char textSecsOld[3];
+    dtostrf(second,1,0,textSecs);
+    Serial.println(textSecs);
+    Serial.println("");
+
     /*** END UPDATE TIMER COMPONENTS ***/
     
-    /*** DISPLAY TIMER COMPONENTS ***/
+    /*** DISPLAY TEXT ***/
+    //if (textHours[0] != textHoursOld[0]) {/*Update the first digit*/}
     if (hour < 10) 
     {
       Tft.drawString("0",140,180,2,WHITE); // 15px b/t elements seems like a good spacing
@@ -130,78 +132,61 @@ void loop()
     
     if (minute < 10) 
     {
-      Tft.drawString("0",140,225,2,WHITE); // 15px b/t elements seems like a good spacing
+      Tft.drawString("0",140,225,2,WHITE);
       Tft.drawString(textMins,140,240,2,WHITE);
       Tft.drawString(":",140,255,2,WHITE);
     }
     else 
     {
-      Tft.drawString(textHours,140,225,2,WHITE);
-      Tft.drawString(":",140,255,2,WHITE); // 30px spacing since its double digits
+      Tft.drawString(textMins,140,225,2,WHITE);
+      Tft.drawString(":",140,255,2,WHITE);
     }
     
     if (second < 10) 
     {
-      Tft.drawString("0",140,270,2,WHITE); // 15px b/t elements seems like a good spacing
+      Tft.drawString("0",140,270,2,WHITE); 
       Tft.drawString(textSecs,140,285,2,WHITE);
     }
     else 
     {
       Tft.drawString(textSecs,140,270,2,WHITE);
-    }
+    }/*** END DISPLAY TEXT ***/
     
     /*** ERASE TEXT ***/
     if (hour < 10) 
     {
-      Tft.drawString("0",140,180,2,BLACK); // 15px b/t elements seems like a good spacing
+      Tft.drawString("0",140,180,2,BLACK); 
       Tft.drawString(textHours,140,195,2,BLACK);
       Tft.drawString(":",140,210,2,BLACK);
     }
     else 
     {
       Tft.drawString(textHours,140,180,2,BLACK);
-      Tft.drawString(":",140,210,2,BLACK); // 30px spacing since its double digits
+      Tft.drawString(":",140,210,2,BLACK); 
     }
     
     if (minute < 10) 
     {
-      Tft.drawString("0",140,225,2,BLACK); // 15px b/t elements seems like a good spacing
+      Tft.drawString("0",140,225,2,BLACK);
       Tft.drawString(textMins,140,240,2,BLACK);
       Tft.drawString(":",140,255,2,BLACK);
     }
     else 
     {
-      Tft.drawString(textHours,140,225,2,BLACK);
-      Tft.drawString(":",140,255,2,BLACK); // 30px spacing since its double digits
+      Tft.drawString(textMins,140,225,2,BLACK);
+      Tft.drawString(":",140,255,2,BLACK);
     }
     
     if (second < 10) 
     {
-      Tft.drawString("0",140,270,2,BLACK); // 15px b/t elements seems like a good spacing
+      Tft.drawString("0",140,270,2,BLACK);
       Tft.drawString(textSecs,140,285,2,BLACK);
     }
     else 
     {
       Tft.drawString(textSecs,140,270,2,BLACK);
-    }
+    }/*** ERASE TEXT ***/
     
-    /*
-    Tft.drawString(textHours,140,180,2,WHITE);
-    Tft.drawString(":",140,200,2,WHITE);
-    
-    Tft.drawString(textMins,140,220,2,WHITE);
-    Tft.drawString(":",140,240,2,WHITE);
-    
-    Tft.drawString(textSecs,140,260,2,WHITE);
-    delay(500);
-    // COPY THE ABOVE CODE BUT PRINT TO BLACK
-    Tft.drawString(textHours,140,180,2,BLACK);
-    Tft.drawString(":",140,200,2,BLACK);
-    Tft.drawString(textMins,140,220,2,BLACK);
-    Tft.drawString(":",140,240,2,BLACK);
-    Tft.drawString(textSecs,140,260,2,BLACK);
-    */
-    /*** END DISPLAY TIMER COMPONENTS ***/
-  }
-}
+  }/***** END TIMER *****/
+}/***** END MAIN LOOP *****/
 
