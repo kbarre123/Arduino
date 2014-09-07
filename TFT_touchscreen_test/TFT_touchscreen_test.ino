@@ -8,19 +8,22 @@
 #include <TFT.h>
 #include <math.h>
 
-#ifdef SEEEDUINO
-#define YP A2   // must be an analog pin, use "An" notation!
-#define XM A1   // must be an analog pin, use "An" notation!
-#define YM 14   // can be a digital pin, this is A0
-#define XP 17   // can be a digital pin, this is A3 
-#endif
-
 #ifdef MEGA
 #define YP A2   // must be an analog pin, use "An" notation!
 #define XM A1   // must be an analog pin, use "An" notation!
 #define YM 54   // can be a digital pin, this is A0
-#define XP 57   // can be a digital pin, this is A3 
-#endif 
+#define XP 57   // can be a digital pin, this is A3
+ 
+#else
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM 14   // can be a digital pin, this is A0
+#define XP 17   // can be a digital pin, this is A3 
+ 
+#endif
+
+// Define board type (for use with declarations above)
+//#define MEGA
 
 /* DEBUG: These variables are temp and represent output of the DallasTemp sensors,
  * as converted from floats to char[] for display to the screen.
@@ -58,8 +61,7 @@ void setup()
 
 void loop()
 {
-
-  /***** READ SENSORS AND DISPLAY *****/
+  /***** READ/DISPLAY SENSOR DATA *****/
   // Convert sensor data of Upper Pot to string for display. 
   char textUpper[8]; // buffer to store the results of dtostrf
   dtostrf(tempUpper, 1, 2, textUpper);  // Arguments are (float, width, precision, buffer)
@@ -74,7 +76,7 @@ void loop()
   //Serial.print("textMash: ");  // DEBUG
   //Serial.println(textMash);  // DEBUG
   //Serial.println("");  // DEBUG
-  /***** END READ SENSORS AND DISPLAY *****/
+  /***** END READ/DISPLAY SENSOR DATA *****/
 
   /***** TIMER *****/
   // Check to see if 1 second has elapsed
@@ -100,16 +102,20 @@ void loop()
     {
       hour++;
       minute = 0;
-    }
+    }/*** END UPDATE TIMER COMPONENTS ***/
     
-    // Update the timer on the display
+    // Display updated timer on LCD
     updateDisplayTimer();
+    
   }/***** END TIMER *****/
 }/***** END MAIN LOOP *****/
 
 /***** USER DEFINED FUNCTIONS *****/
+
+// Update the timer on the display
 void updateDisplayTimer()
 {
+  // Print ints to string in preparation of printing to LCD display
   sprintf(_hour, "%02d", hour); // Arguments are: (buffer, format, value to print)
   Serial.print(_hour);
   Serial.print(":");
@@ -122,22 +128,18 @@ void updateDisplayTimer()
   Serial.println(_second);
   Serial.println("");
   
-  /*** END UPDATE TIMER COMPONENTS ***/
-  
-  /*** DISPLAY TEXT ***/
+  // Display text
   Tft.drawString(_hour,140,180,2,WHITE);
-  Tft.drawString(":",140,210,2,WHITE); // 30px spacing since its double digits
+  Tft.drawString(":",140,210,2,WHITE);
   
   Tft.drawString(_minute,140,225,2,WHITE);
   Tft.drawString(":",140,255,2,WHITE);
   
   Tft.drawString(_second,140,270,2,WHITE);
-  /*** END DISPLAY TEXT ***/
   
-  /*** ERASE TEXT ***/
+  // Erase text
   Tft.drawString(_hour,140,180,2,BLACK);
   Tft.drawString(_minute,140,225,2,BLACK);
   Tft.drawString(_second,140,270,2,BLACK);
-  /*** ERASE TEXT ***/
 }
 
