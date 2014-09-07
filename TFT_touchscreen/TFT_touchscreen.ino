@@ -1,67 +1,53 @@
-// Draw Texts in the four directions of the TFT by Frankie.Chu
-//  This library is free software; you can redistribute it and/or
-//  modify it under the terms of the GNU Lesser General Public
-//  License as published by the Free Software Foundation; either
-//  version 2.1 of the License, or (at your option) any later version.
-//
-//  This library is distributed in the hope that it will be useful,
-//  but WITHOUT ANY WARRANTY; without even the implied warranty of
-//  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-//  Lesser General Public License for more details.
-//
-//  You should have received a copy of the GNU Lesser General Public
-//  License along with this library; if not, write to the Free Software
-//  Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-/*
-    Modified record:
-    
-*/
+/**
+ * Seeedstudio LCD 2.8" TFT touchscreen
+ * Will display data from two temp sensors and has a countdown clock.
+ * Intended use if for the brew_bot.v2
+ */
 #include <stdint.h>
-#include <TouchScreen.h> 
+//#include <TouchScreen.h> // Will be used to read touch events
 #include <TFT.h>
 #include <math.h>
 
-#ifdef SEEEDUINO
-  #define YP A2   // must be an analog pin, use "An" notation!
-  #define XM A1   // must be an analog pin, use "An" notation!
-  #define YM 14   // can be a digital pin, this is A0
-  #define XP 17   // can be a digital pin, this is A3 
+#ifdef MEGA
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM 54   // can be a digital pin, this is A0
+#define XP 57   // can be a digital pin, this is A3
+ 
+#else
+#define YP A2   // must be an analog pin, use "An" notation!
+#define XM A1   // must be an analog pin, use "An" notation!
+#define YM 14   // can be a digital pin, this is A0
+#define XP 17   // can be a digital pin, this is A3 
+ 
 #endif
 
-#ifdef MEGA
-  #define YP A2   // must be an analog pin, use "An" notation!
-  #define XM A1   // must be an analog pin, use "An" notation!
-  #define YM 54   // can be a digital pin, this is A0
-  #define XP 57   // can be a digital pin, this is A3 
-#endif 
+// Define board type (for use with declarations above)
+//#define MEGA
 
 /* DEBUG: These variables are temp and represent output of the DallasTemp sensors,
  * as converted from floats to char[] for display to the screen.
-*/
+ */
 float tempUpper = 125.65;
 float tempMash = 75.22;
 
 // Variables for the timer
 long interval = 1000;  // Threshold at which to update the Timer
-long previousMillis = 0;  // Will store last time Timer was updated
-unsigned long currentMillis;  // current millis
-long hours=0;
-long mins=0;
-long secs=0;
-long leadingTenThreshold = 10;
-
-// Constants to calculate printable time
-const long MILLIS_IN_HOUR= 3600000;
-const long MILLIS_IN_MINUTE = 60000;
-const long MILLIS_IN_SECOND = 1000;
+unsigned long currentMillis = 0;  // current millis
+unsigned long previousMillis = 0;  // Will store last time Timer was updated
+unsigned long benchMillis = 0;  // Variable used to be able to reset second to zero and still be able to keep track of time
+int second = 0, minute = 0, hour = 0; // Keep track of time so we can increment min/hours based on elapsed seconds
+const long MILLIS_IN_MINUTE = 60000;  // Constant to calculate printable time
+char _hour[3]; // Buffer to store the current hour in. Used to compare to see if it has changed and needs to be updated. Prevents blinking every pass through main loop.
+char _minute[3];
+char _second[3];
 
 void setup()
 {
   Serial.begin(9600);
   Tft.init();  //init TFT library
   Tft.paintScreenBlack();  // Clear screen
-  delay(1000);
-  
+
   Tft.setDisplayDirect(UP2DOWN);
   Tft.drawString("Upper: ",220,20,2,WHITE);
   Tft.drawString("Mash: ",180,20,2,WHITE);
@@ -70,13 +56,12 @@ void setup()
   Tft.fillRectangle(10, 175, 50, 125, RED);
   Tft.drawString("Start",45,27,3,BLACK);
   Tft.drawString("Stop",45,193,3,BLACK);
+  previousMillis = millis();
 }
 
 void loop()
 {
-  
-  currentMillis = millis();
-  /* READ SENSORS AND DISPLAY */
+  /***** READ/DISPLAY SENSOR DATA *****/
   // Convert sensor data of Upper Pot to string for display. 
   char textUpper[8]; // buffer to store the results of dtostrf
   dtostrf(tempUpper, 1, 2, textUpper);  // Arguments are (float, width, precision, buffer)
@@ -91,44 +76,70 @@ void loop()
   //Serial.print("textMash: ");  // DEBUG
   //Serial.println(textMash);  // DEBUG
   //Serial.println("");  // DEBUG
-  
-  /* UPDATE TIMER */
+  /***** END READ/DISPLAY SENSOR DATA *****/
+
+  /***** TIMER *****/
+  // Check to see if 1 second has elapsed
+  currentMillis = millis();
   if(currentMillis - previousMillis > interval) 
   {
-    // save the last time you updated Timer
+    // Save the last time you updated Timer
     previousMillis = currentMillis;
     
-    secs = floor(currentMillis / 1000);
-    char textSecs[4];
-    dtostrf(secs,1,0,textSecs);
-    Serial.print("textSecs: ");
-    Serial.println(textSecs);
+    /*** UPDATE TIMER COMPONENTS ***/
+    if (currentMillis > benchMillis + MILLIS_IN_MINUTE) 
+    {
+      minute++;
+      second = 0;
+      benchMillis = currentMillis;
+    }
+    else
+    {
+      second = (currentMillis - benchMillis) / 1000;
+    }
+
+    if (minute > 59) 
+    {
+      hour++;
+      minute = 0;
+    }/*** END UPDATE TIMER COMPONENTS ***/
     
-    mins = floor(secs / 60);
-    char textMins[3];
-    dtostrf(mins,1,0,textMins);    
-    Serial.print("textMins: ");
-    Serial.println(textMins);
+    // Display updated timer on LCD
+    updateDisplayTimer();
     
-    hours = floor(mins / 60);
-    char textHours[3];
-    dtostrf(hours,1,0,textHours);
-    Serial.print("textHours: ");
-    Serial.println(textHours);
-    
-    // Concat char[]'s together since drawString only accepts one char[]
-    char temp[10] = {""};
-    (hours < leadingTenThreshold) ? strcat('0', textHours) : strcat(temp, textHours);
-    strcat(temp, ':');
-    (mins < leadingTenThreshold) ? strcat('0', textMins) : strcat(temp, textMins);
-    strcat(temp, ':');
-    (secs < leadingTenThreshold) ? strcat('0', textSecs) : strcat(temp, textSecs);
-    Serial.println(temp);
-    Serial.println("");
-    
-    // Increment the displayed timer by 1 second
-    Tft.drawString(temp,140,180,2,WHITE);
-    delay(900);
-    Tft.drawString(temp,140,180,2,BLACK);
-  }
+  }/***** END TIMER *****/
+}/***** END MAIN LOOP *****/
+
+/***** USER DEFINED FUNCTIONS *****/
+
+// Update the timer on the display
+void updateDisplayTimer()
+{
+  // Print ints to string in preparation of printing to LCD display
+  sprintf(_hour, "%02d", hour); // Arguments are: (buffer, format, value to print)
+  Serial.print(_hour);
+  Serial.print(":");
+  
+  sprintf(_minute, "%02d", minute); 
+  Serial.print(_minute);
+  Serial.print(":");  
+  
+  sprintf(_second, "%02d", second);
+  Serial.println(_second);
+  Serial.println("");
+  
+  // Display text
+  Tft.drawString(_hour,140,180,2,WHITE);
+  Tft.drawString(":",140,210,2,WHITE);
+  
+  Tft.drawString(_minute,140,225,2,WHITE);
+  Tft.drawString(":",140,255,2,WHITE);
+  
+  Tft.drawString(_second,140,270,2,WHITE);
+  
+  // Erase text
+  Tft.drawString(_hour,140,180,2,BLACK);
+  Tft.drawString(_minute,140,225,2,BLACK);
+  Tft.drawString(_second,140,270,2,BLACK);
 }
+
