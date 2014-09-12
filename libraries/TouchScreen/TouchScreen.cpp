@@ -16,21 +16,21 @@
 
 #define NUMSAMPLES 2
 
-TSPoint::TSPoint(void) {
+Point::Point(void) {
   x = y = 0;
 }
 
-TSPoint::TSPoint(int16_t x0, int16_t y0, int16_t z0) {
+Point::Point(int16_t x0, int16_t y0, int16_t z0) {
   x = x0;
   y = y0;
   z = z0;
 }
 
-bool TSPoint::operator==(TSPoint p1) {
+bool Point::operator==(Point p1) {
   return  ((p1.x == x) && (p1.y == y) && (p1.z == z));
 }
 
-bool TSPoint::operator!=(TSPoint p1) {
+bool Point::operator!=(Point p1) {
   return  ((p1.x != x) || (p1.y != y) || (p1.z != z));
 }
 
@@ -48,7 +48,7 @@ static void insert_sort(int array[], uint8_t size) {
 }
 #endif
 
-TSPoint TouchScreen::getPoint(void) {
+Point TouchScreen::getPoint(void) {
   int x, y, z;
   int samples[NUMSAMPLES];
   uint8_t i, valid;
@@ -152,7 +152,7 @@ TSPoint TouchScreen::getPoint(void) {
      z = 0;
    }
 
-   return TSPoint(x, y, z);
+   return Point(x, y, z);
 }
 
 TouchScreen::TouchScreen(uint8_t xp, uint8_t yp, uint8_t xm, uint8_t ym) {
