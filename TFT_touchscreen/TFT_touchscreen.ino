@@ -4,8 +4,8 @@
  * Intended use if for the brew_bot.v2
  */
 #include <stdint.h>
-//#include <TouchScreen.h> // Will be used to read touch events
-#include <TFT.h>
+#include <TouchScreen.h> // Will be used to read touch events
+#include <TFT.h> // In this file, line #33 must be changed to either MEGA or SEEEDUINO depending on which board is being used
 #include <math.h>
 
 #ifdef MEGA
@@ -14,21 +14,18 @@
 #define YM 54   // can be a digital pin, this is A0
 #define XP 57   // can be a digital pin, this is A3
  
-#else
+#else           // Used for Uno
 #define YP A2   // must be an analog pin, use "An" notation!
 #define XM A1   // must be an analog pin, use "An" notation!
 #define YM 14   // can be a digital pin, this is A0
 #define XP 17   // can be a digital pin, this is A3 
- 
-#endif
 
-// Define board type (for use with declarations above)
-//#define MEGA
+#endif
 
 /* DEBUG: These variables are temp and represent output of the DallasTemp sensors,
  * as converted from floats to char[] for display to the screen.
  */
-float tempUpper = 125.65;
+float tempUpper = 145.65;
 float tempMash = 75.22;
 
 // Variables for the timer
