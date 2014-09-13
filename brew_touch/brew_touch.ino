@@ -26,7 +26,9 @@ See the readme.txt file for information on find the libraries this library uses.
 #include <TouchScreen.h>
 #include <TFT.h>
 #include <cstddef.h>
+#include <stdint.h>
 
+/******************* MENU SETUP ***********************/
 // create the array of items for the main menu
 TouchScreenMenuItem mainMenuItems[] = {
   TouchScreenMenuItem("Water Chem"),
@@ -55,7 +57,24 @@ TouchScreenMenu *curMenu = &mainMenu;
 TouchScreenArea backBtn =  TouchScreenButton("Back",  TSC.createColor(255, 255, 255), TSC.createColor(0, 0, 0), 20, TSC.getScreenHeight() - 50, 2, 10);
 TouchScreenArea resetBtn = TouchScreenButton("Reset", TSC.createColor(255, 255, 255), TSC.createColor(0, 0, 0), 125, TSC.getScreenHeight() - 50, 2, 10);
 
+/******************* TEMP SENSOR SETUP *******************/
+float tempUpper = 0;
+float tempMash = 0;
+
+/******************* TIMER SETUP *************************/
+long interval = 1000;  // Threshold at which to update the Timer
+unsigned long currentMillis = 0;  // current millis
+unsigned long previousMillis = 0;  // Will store last time Timer was updated
+unsigned long benchMillis = 0;  // Variable used to be able to reset second to zero and still be able to keep track of time
+int second = 0, minute = 0, hour = 0; // Keep track of time so we can increment min/hours based on elapsed seconds
+const long MILLIS_IN_MINUTE = 60000;  // Constant to calculate printable time
+char _hour[3]; // Buffer to store the current hour in. Used to compare to see if it has changed and needs to be updated. Prevents blinking every pass through main loop.
+char _minute[3];
+char _second[3];
+
 void setup(void) {
+  Serial.begin(9600);
+  previousMillis = millis();
   TSC.setBackColor(TSC.createColor(0, 0, 0)); // change the default background color
   TSC.init(); // make sure everything get initialized
   curMenu->draw(); // put up the main menu
@@ -91,7 +110,25 @@ void checkMenuSelection(TouchScreenMenuItem *item) {
       else if(!strcmp(item->getText(),"Start")){
         curMenu = NULL;
         TSC.clearScreen();
-        TSC.drawString("Sensor Data", 20, 20, 2, TSC.createColor(255, 255, 255));
+        
+        // Convert sensor data to strings for display.
+        char textUpper[8];                    // buffer to store the results of dtostrf
+        dtostrf(tempUpper, 1, 2, textUpper);  // Arguments are (float, width, precision, buffer)
+        char textMash[8];
+        dtostrf(tempMash, 1, 2, textMash);
+        
+        // Display results
+        TSC.drawString("Upper:", 20, 20, 2, TSC.createColor(255, 255, 255));
+        TSC.drawString(textUpper, 150, 20, 2, TSC.createColor(255, 255, 255));
+        Serial.print("textUpper: ");  // DEBUG
+        Serial.println(textUpper);  // DEBUG
+        
+        TSC.drawString("Mash:", 20, 50, 2, TSC.createColor(255, 255, 255));
+        TSC.drawString(textMash, 150, 50, 2, TSC.createColor(255, 255, 255));
+        Serial.print("textMash: ");  // DEBUG
+        Serial.println(textMash);  // DEBUG
+        Serial.println("");  // DEBUG
+        
         backBtn.draw();
         resetBtn.draw();
         handled = true;
