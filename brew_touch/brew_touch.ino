@@ -107,33 +107,58 @@ void checkMenuSelection(TouchScreenMenuItem *item) {
       else if(!strcmp(item->getText(),"Pale Ale")){
         curMenu = NULL;
         TSC.clearScreen();
-        TSC.drawString("Pale Ale", 20, 20, 2, TSC.createColor(255, 255, 255));
+        int yPos = 20;
+        TSC.drawString("Pale Ale    5gal  10gal", 20, yPos,       1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Dilution:    50%    50%", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Gypsum:     7.0g  14.0g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Salt:       1.2g   2.4g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("CaCl2:      1.0g   2.0g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Pick Lime:  0.2g   0.4g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("MgCl2:      1.0g   2.0g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
         backBtn.draw();
-        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
         handled = true;
       }
       else if(!strcmp(item->getText(),"Amber/ESB")){
         curMenu = NULL;
         TSC.clearScreen();
-        TSC.drawString("Amber/ESB", 20, 20, 2, TSC.createColor(255, 255, 255));
+        int yPos = 20;
+        TSC.drawString("Amber/ESB    5gal   10gal", 20, yPos,       1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Dilution:      0%      0%", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Gypsum:     1.80g   3.60g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Salt:       0.00g   0.00g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("CaCl2:      1.20g   2.40g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Phos Acid:  0.80g   1.60g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("MgCl2:      1.12g   2.24g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
         backBtn.draw();
-        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
         handled = true;
       }
       else if(!strcmp(item->getText(),"Brown/Porter")){
         curMenu = NULL;
         TSC.clearScreen();
-        TSC.drawString("Brown/Porter", 20, 20, 2, TSC.createColor(255, 255, 255));
+        int yPos = 20;
+        TSC.drawString("Brn/Prtr     5gal   10gal", 20, yPos,       1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Dilution:     50%     50%", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Gypsum:     1.80g   3.60g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Pick Lime:  0.40g   0.80g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("CaCl2:      0.80g   1.60g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Phos Acid:  0.80g   1.60g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("MgCl2:      1.12g   2.24g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
         backBtn.draw();
-        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
         handled = true;
       }
       else if(!strcmp(item->getText(),"Stout")){
         curMenu = NULL;
         TSC.clearScreen();
-        TSC.drawString("Stout", 20, 20, 2, TSC.createColor(255, 255, 255));
+        int yPos = 20;
+        TSC.drawString("Stout       5gal  10gal", 20, yPos,       1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Dilution:    25%    25%", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Gypsum:     0.8g   1.6g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Salt:       0.4g   0.8g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("CaCl2:      0.4g   0.8g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Phos Acid:  1.0g   2.0g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("Pick Lime:  0.8g   1.6g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
+        TSC.drawString("MgCl2:      1.0g   2.0g", 20, yPos += 20, 1, TSC.createColor(255, 255, 255));
         backBtn.draw();
-        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
         handled = true;
       }
     }
