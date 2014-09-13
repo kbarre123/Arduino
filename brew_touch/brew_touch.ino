@@ -53,7 +53,6 @@ TouchScreenMenu *curMenu = &mainMenu;
 
 // Buttons for non-menu screens that are only monitored if curMenu=NULL (i.e. not on a menu screen)
 TouchScreenArea backBtn =  TouchScreenButton("Back",  TSC.createColor(255, 255, 255), TSC.createColor(0, 0, 0), 20, TSC.getScreenHeight() - 50, 2, 10);
-TouchScreenArea startBtn = TouchScreenButton("Start", TSC.createColor(0, 255, 0),     TSC.createColor(0, 0, 0), 125, TSC.getScreenHeight() - 50, 2, 10);
 TouchScreenArea resetBtn = TouchScreenButton("Reset", TSC.createColor(255, 255, 255), TSC.createColor(0, 0, 0), 125, TSC.getScreenHeight() - 50, 2, 10);
 
 void setup(void) {
@@ -88,86 +87,72 @@ void checkMenuSelection(TouchScreenMenuItem *item) {
         curMenu->draw();
         handled = true;
       }
+      // THIS IS WHERE ALL THE MAGIC HAPPENS------------------------------------------------------------------------------------>
       else if(!strcmp(item->getText(),"Start")){
         curMenu = NULL;
         TSC.clearScreen();
+        TSC.drawString("Sensor Data", 20, 20, 2, TSC.createColor(255, 255, 255));
         backBtn.draw();
-        TSC.drawString("Sensor Data", 50, 50, 2, TSC.createColor(255, 255, 255));
+        resetBtn.draw();
+        handled = true;
+      }// THIS IS WHERE ALL THE MAGIC HAPPENS----------------------------------------------------------------------------------->
+    }
+    else if(curMenu == &waterMenu){
+      if(!strcmp(item->getText(),"Back")){
+        curMenu = &mainMenu;
+        TSC.clearScreen();
+        curMenu->draw();
+        handled = true;
+      }
+      else if(!strcmp(item->getText(),"Pale Ale")){
+        curMenu = NULL;
+        TSC.clearScreen();
+        TSC.drawString("Pale Ale", 20, 20, 2, TSC.createColor(255, 255, 255));
+        backBtn.draw();
+        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
+        handled = true;
+      }
+      else if(!strcmp(item->getText(),"Amber/ESB")){
+        curMenu = NULL;
+        TSC.clearScreen();
+        TSC.drawString("Amber/ESB", 20, 20, 2, TSC.createColor(255, 255, 255));
+        backBtn.draw();
+        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
+        handled = true;
+      }
+      else if(!strcmp(item->getText(),"Brown/Porter")){
+        curMenu = NULL;
+        TSC.clearScreen();
+        TSC.drawString("Brown/Porter", 20, 20, 2, TSC.createColor(255, 255, 255));
+        backBtn.draw();
+        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
+        handled = true;
+      }
+      else if(!strcmp(item->getText(),"Stout")){
+        curMenu = NULL;
+        TSC.clearScreen();
+        TSC.drawString("Stout", 20, 20, 2, TSC.createColor(255, 255, 255));
+        backBtn.draw();
         //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
         handled = true;
       }
     }
-  else if(curMenu == &waterMenu){
-    if(!strcmp(item->getText(),"Back")){
-      curMenu = &mainMenu;
-      TSC.clearScreen();
-      curMenu->draw();
-      handled = true;
+    
+    // if the menu item didn't get handled redraw it unpressed
+    if(handled==false)
+        curMenu->drawItem(item,false);
     }
-    else if(!strcmp(item->getText(),"Pale Ale")){
-      curMenu = NULL;
-      TSC.clearScreen();
-      TSC.drawString("Pale Ale", 50, 50, 2, TSC.createColor(255, 255, 255));
-      backBtn.draw();
-      startBtn.draw();
-      //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
-      handled = true;
-    }
-    else if(!strcmp(item->getText(),"Amber/ESB")){
-      curMenu = NULL;
-      TSC.clearScreen();
-      TSC.drawString("Amber/ESB", 50, 50, 2, TSC.createColor(255, 255, 255));
-      backBtn.draw();
-      startBtn.draw();
-      //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
-      handled = true;
-    }
-    else if(!strcmp(item->getText(),"Brown/Porter")){
-      curMenu = NULL;
-      TSC.clearScreen();
-      TSC.drawString("Brown/Porter", 50, 50, 2, TSC.createColor(255, 255, 255));
-      backBtn.draw();
-      startBtn.draw();
-      //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
-      handled = true;
-    }
-    else if(!strcmp(item->getText(),"Stout")){
-      curMenu = NULL;
-      TSC.clearScreen();
-      TSC.drawString("Stout", 50, 50, 2, TSC.createColor(255, 255, 255));
-      backBtn.draw();
-      startBtn.draw();
-      //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
-      handled = true;
-    }
-  }
-  
-  // if the menu item didn't get handled redraw it unpressed
-  if(handled==false)
-      curMenu->drawItem(item,false);
-  }
 }
 
 // check various buttons and perform actions if any was pressed
 void checkButtons(){
   if(backBtn.process()){ // return from the graphics function screen
-        curMenu = &waterMenu;
-        TSC.clearScreen();
-        curMenu->draw();
-  }
-  else if(startBtn.process()){
-        curMenu = NULL;
-        TSC.clearScreen();
-        backBtn.draw();
-        TSC.drawString("Sensor Data", 50, 50, 2, TSC.createColor(255, 255, 255));
-        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
+    curMenu = &waterMenu;
+    TSC.clearScreen();
+    curMenu->draw();
   }
   else if(resetBtn.process()){
-        curMenu = NULL;
-        TSC.clearScreen();
-        backBtn.draw();
-        TSC.drawString("Reset Timer", 50, 50, 2, TSC.createColor(255, 255, 255));
-        //TSC.drawString("Sensor Data",unsigned int poX, unsigned int poY,unsigned int size,unsigned int color);
+    // Reset timer
   }
 }
 
