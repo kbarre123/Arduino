@@ -30,7 +30,8 @@
 #ifndef TFT_h
 #define TFT_h
 
-#define MEGA //#define SEEEDUINO 
+#define MEGA 
+//#define SEEEDUINO 
 
 //Basic Colors
 #define RED		0xf800

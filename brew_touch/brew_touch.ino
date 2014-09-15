@@ -120,8 +120,8 @@ int notesLength[] = {  // Note durations: 4 = quarter note, 8 = eighth note, etc
 
 // Set up everything
 void setup(void) {
-  Serial.begin(9600);
-  Serial.println("Booting...");
+  //Serial.begin(9600);
+  //Serial.println("Booting...");
   
   // Fire up the sensors
   sensors.begin();
@@ -129,11 +129,11 @@ void setup(void) {
   sensors.setResolution(SensorA, 10);
   sensors.setResolution(SensorB, 10);
 
-  Serial.print("Initializing Temperature Control Library Version ");
+  /*Serial.print("Initializing Temperature Control Library Version ");
   Serial.println(DALLASTEMPLIBVERSION);
   Serial.print("Number of Devices found on bus = ");  
   Serial.println(sensors.getDeviceCount());
-  Serial.println("");
+  Serial.println("");*/
 
   // Declare pin modes for LED
   pinMode(RED_PIN, OUTPUT);
@@ -152,7 +152,7 @@ void setup(void) {
 }
 
 void loop(void) {
-  Serial.println("Enter loop"); // DEBUG
+  //Serial.println("Enter loop"); // DEBUG
   // Update the time
   updateTimer();
   if (displaySensorSwitch == true) {
@@ -172,13 +172,13 @@ void loop(void) {
     // to see if any of them were pressed
     checkButtons();
   }
-  Serial.println("Exit loop"); // DEBUG
-  Serial.println(""); // DEBUG
+  //Serial.println("Exit loop"); // DEBUG
+  //Serial.println(""); // DEBUG
 }
 
 // check to see if any menu item was pressed and do something
 void checkMenuSelection(TouchScreenMenuItem *item) {
-  Serial.println("Enter checkMenuSelection()"); // DEBUG
+  //Serial.println("Enter checkMenuSelection()"); // DEBUG
   boolean handled = false;
   if(item != NULL){
     // main menu items 
@@ -277,12 +277,12 @@ void checkMenuSelection(TouchScreenMenuItem *item) {
     if(handled==false)
       curMenu->drawItem(item,false);
     }
-  Serial.println("Exit checkMenuSelection()"); // DEBUG
+  //Serial.println("Exit checkMenuSelection()"); // DEBUG
 }
 
 // check various buttons and perform actions if any was pressed
 void checkButtons(){
-  Serial.println("Enter checkButtons()"); // DEBUG
+  //Serial.println("Enter checkButtons()"); // DEBUG
   if(backBtn.process()){
     displaySensorSwitch = false;
     curMenu = &mainMenu;
@@ -292,13 +292,13 @@ void checkButtons(){
   else if(resetBtn.process()){
     // Reset timer
   }
-  Serial.println("Exit checkButtons()"); // DEBUG
+  //Serial.println("Exit checkButtons()"); // DEBUG
 }
 
 // Update the timer displayed on "Start" screen
 void updateTimer()
 {
-  Serial.println("Enter updateTimer()"); // DEBUG
+  //Serial.println("Enter updateTimer()"); // DEBUG
   // Check to see if 1 second has elapsed
   currentMillis = millis();
   if(currentMillis - previousMillis > interval) 
@@ -323,31 +323,31 @@ void updateTimer()
       minute = 0;
     }
   }
-  Serial.println("Exit updateTimer()"); // DEBUG
+  //Serial.println("Exit updateTimer()"); // DEBUG
 }
 
 // Contert h/m/s into strings and print to display
 void displayTimer()
 {
-  Serial.println("Enter displayTimer()"); // DEBUG
+  //Serial.println("Enter displayTimer()"); // DEBUG
   // Print ints to string in preparation of printing to display
   sprintf(_hour, "%02d", hour); // Arguments are: (buffer, format, value to print)
-  Serial.print(_hour);
-  Serial.print(":");
+  //Serial.print(_hour);
+  //Serial.print(":");
   
   sprintf(_minute, "%02d", minute); 
-  Serial.print(_minute);
-  Serial.print(":");  
+  //Serial.print(_minute);
+  //Serial.print(":");  
   
   sprintf(_second, "%02d", second);
-  Serial.println(_second);
+  //Serial.println(_second);
   
   // Display text
   TSC.drawString(_hour, 20, 80, 2, WHITE);
   TSC.drawString(_minute, 65, 80, 2, WHITE);
   TSC.drawString(_second, 110, 80, 2, WHITE);
   
-  Serial.println("Exit displayTimer()"); // DEBUG
+  //Serial.println("Exit displayTimer()"); // DEBUG
 }
 
 void displaySensor()
@@ -364,12 +364,12 @@ void displaySensor()
   
   // Display results
   TSC.drawString(textUpper, 150, 20, 2, WHITE);
-  Serial.print("textUpper: ");  // DEBUG
-  Serial.println(textUpper);  // DEBUG
+  //Serial.print("textUpper: ");  // DEBUG
+  //Serial.println(textUpper);  // DEBUG
 
   TSC.drawString(textMash, 150, 50, 2, WHITE);
-  Serial.print("textMash: ");  // DEBUG
-  Serial.println(textMash);  // DEBUG
+  //Serial.print("textMash: ");  // DEBUG
+  //Serial.println(textMash);  // DEBUG
 }
 
 void clearDisplay()
