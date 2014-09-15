@@ -1,26 +1,5 @@
 /*
-This example shows the various abilities of the TouchScreenMenu library.
-See the readme.txt file for information on find the libraries this library uses.
-
- TouchScreenMenu Library. 
- 
- 2012 Copyright (c) Scott Shaver
- 
- Authors: Scott Shaver
- 
- This library is free software; you can redistribute it and/or
- modify it under the terms of the GNU Lesser General Public
- License as published by the Free Software Foundation; either
- version 3 of the License, or (at your option) any later version.
- 
- This library is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- Lesser General Public License for more details.
- 
- You should have received a copy of the GNU Lesser General Public
- License along with this library; if not, write to the Free Software
- Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+TouchScreenMenu Library, 2012 Copyright (c) Scott Shaver
  */
 #include <TouchScreenMenu.h>
 #include <TouchScreen.h>
@@ -29,10 +8,6 @@ See the readme.txt file for information on find the libraries this library uses.
 #include <stdint.h>
 
 /******************* MENU SETUP ***********************/
-// Define colors
-#define WHITE TSC.createColor(255, 255, 255)
-#define BLACK TSC.createColor(0, 0, 0)
-
 // create the array of items for the main menu
 TouchScreenMenuItem mainMenuItems[] = {
   TouchScreenMenuItem("Water Chem"),
@@ -62,8 +37,10 @@ TouchScreenArea backBtn =  TouchScreenButton("Back",  WHITE, BLACK, 20, TSC.getS
 TouchScreenArea resetBtn = TouchScreenButton("Reset", WHITE, BLACK, 125, TSC.getScreenHeight() - 50, 2, 10);
 
 /******************* TEMP SENSOR SETUP *******************/
-float tempUpper = 0;
-float tempMash = 0;
+float tempUpper = 0;  // var to store temp reading for upper pot
+float tempMash = 0;   // var to store temp reading of mash tun
+char textUpper[8];    // buffer to store the results of dtostrf
+char textMash[8];     // buffer to store the results of dtostrf
 
 /******************* TIMER SETUP *************************/
 long interval = 1000;  // Threshold at which to update the Timer
@@ -75,10 +52,11 @@ const long MILLIS_IN_MINUTE = 60000;  // Constant to calculate printable time
 char _hour[3]; // Buffer to store the current hour in. Used to compare to see if it has changed and needs to be updated. Prevents blinking every pass through main loop.
 char _minute[3];
 char _second[3];
-boolean displayTimerSwitch = false;
+boolean displaySensorSwitch = false;
 
 void setup(void) {
   Serial.begin(9600);
+  Serial.println("Setup...");
   previousMillis = millis();
   TSC.setBackColor(BLACK); // change the default background color
   TSC.init(); // make sure everything get initialized
@@ -86,6 +64,15 @@ void setup(void) {
 }
 
 void loop(void) {
+  Serial.println("Enter loop"); // DEBUG
+  // Update the time
+  updateTimer();
+  if (displaySensorSwitch == true) {
+    displaySensor();
+    displayTimer();
+    clearDisplay();
+  }
+  
   // handle the current menu
   if(curMenu!=NULL){
     // process the current menu
@@ -97,14 +84,13 @@ void loop(void) {
     // to see if any of them were pressed
     checkButtons();
   }
-  if(displayTimerSwitch == true)
-  {
-    displayTimer();
-  }
+  Serial.println("Exit loop"); // DEBUG
+  Serial.println(""); // DEBUG
 }
 
 // check to see if any menu item was pressed and do something
 void checkMenuSelection(TouchScreenMenuItem *item) {
+  Serial.println("Enter checkMenuSelection()"); // DEBUG
   boolean handled = false;
   if(item != NULL){
     // main menu items 
@@ -115,37 +101,23 @@ void checkMenuSelection(TouchScreenMenuItem *item) {
         curMenu->draw();
         handled = true;
       }
-      // THIS IS WHERE ALL THE MAGIC HAPPENS------------------------------------------------------------------------------------>
+      // Main Display
       else if(!strcmp(item->getText(),"Start")){
         curMenu = NULL;
         TSC.clearScreen();
-        
-        // Convert sensor data to strings for display.
-        char textUpper[8];                    // buffer to store the results of dtostrf
-        dtostrf(tempUpper, 1, 2, textUpper);  // Arguments are (float, width, precision, buffer)
-        char textMash[8];
-        dtostrf(tempMash, 1, 2, textMash);
-        
-        // Display results
         TSC.drawString("Upper:", 20, 20, 2, WHITE);
-        TSC.drawString(textUpper, 150, 20, 2, WHITE);
-        Serial.print("textUpper: ");  // DEBUG
-        Serial.println(textUpper);  // DEBUG
-        
         TSC.drawString("Mash:", 20, 50, 2, WHITE);
-        TSC.drawString(textMash, 150, 50, 2, WHITE);
-        Serial.print("textMash: ");  // DEBUG
-        Serial.println(textMash);  // DEBUG
-        Serial.println("");  // DEBUG
+        TSC.drawString(":", 50, 80, 2, WHITE);
+        TSC.drawString(":", 95, 80, 2, WHITE);
         
-        // Display updated timer on LCD
-        displayTimerSwitch = true;
+        // Turn on timer display in main()
+        displaySensorSwitch = true;
         
         // Draw buttons
         backBtn.draw();
         resetBtn.draw();
         handled = true;
-      }// THIS IS WHERE ALL THE MAGIC HAPPENS----------------------------------------------------------------------------------->
+      }
     }
     else if(curMenu == &waterMenu){
       if(!strcmp(item->getText(),"Back")){
@@ -217,23 +189,28 @@ void checkMenuSelection(TouchScreenMenuItem *item) {
     if(handled==false)
       curMenu->drawItem(item,false);
     }
+  Serial.println("Exit checkMenuSelection()"); // DEBUG
 }
 
 // check various buttons and perform actions if any was pressed
 void checkButtons(){
-  if(backBtn.process()){ // return from the graphics function screen
-    curMenu = &waterMenu;
-    displayTimerSwitch == false;
+  Serial.println("Enter checkButtons()"); // DEBUG
+  if(backBtn.process()){
+    displaySensorSwitch = false;
+    curMenu = &mainMenu;
     TSC.clearScreen();
     curMenu->draw();
   }
   else if(resetBtn.process()){
     // Reset timer
   }
+  Serial.println("Exit checkButtons()"); // DEBUG
 }
 
+// Update the timer displayed on "Start" screen
 void updateTimer()
 {
+  Serial.println("Enter updateTimer()"); // DEBUG
   // Check to see if 1 second has elapsed
   currentMillis = millis();
   if(currentMillis - previousMillis > interval) 
@@ -258,11 +235,14 @@ void updateTimer()
       minute = 0;
     }
   }
+  Serial.println("Exit updateTimer()"); // DEBUG
 }
 
+// Contert h/m/s into strings and print to display
 void displayTimer()
 {
-  // Print ints to string in preparation of printing to LCD display
+  Serial.println("Enter displayTimer()"); // DEBUG
+  // Print ints to string in preparation of printing to display
   sprintf(_hour, "%02d", hour); // Arguments are: (buffer, format, value to print)
   Serial.print(_hour);
   Serial.print(":");
@@ -273,21 +253,44 @@ void displayTimer()
   
   sprintf(_second, "%02d", second);
   Serial.println(_second);
-  Serial.println("");
   
   // Display text
   TSC.drawString(_hour, 20, 80, 2, WHITE);
-  Tft.drawString(":", 50, 80, 2, WHITE);
+  TSC.drawString(_minute, 65, 80, 2, WHITE);
+  TSC.drawString(_second, 110, 80, 2, WHITE);
   
-  Tft.drawString(_minute, 65, 80, 2, WHITE);
-  Tft.drawString(":", 95, 80, 2, WHITE);
+  Serial.println("Exit displayTimer()"); // DEBUG
+}
+
+void displaySensor()
+{
+  // TODO: Read sensors and update tempUpper & tempMash
   
-  Tft.drawString(_second, 110, 80, 2, WHITE);
+  // Convert sensor data (float) to strings for display.
+  dtostrf(second, 1, 2, textUpper);  // Arguments are (float, width, precision, buffer)
+  dtostrf((second * 2), 1, 2, textMash);
   
-  // Erase text
-  Tft.drawString(_hour, 20, 80, 2, BLACK);
-  Tft.drawString(_minute, 65, 80, 2, BLACK);
-  Tft.drawString(_second, 110, 80, 2, BLACK);
+  // Display results
+  TSC.drawString(textUpper, 150, 20, 2, WHITE);
+  Serial.print("textUpper: ");  // DEBUG
+  Serial.println(textUpper);  // DEBUG
+
+  TSC.drawString(textMash, 150, 50, 2, WHITE);
+  Serial.print("textMash: ");  // DEBUG
+  Serial.println(textMash);  // DEBUG
+  Serial.println("");  // DEBUG
+}
+
+void clearDisplay()
+{
+  // Clear sensor
+  TSC.drawString(textUpper, 150, 20, 2, BLACK);
+  TSC.drawString(textMash, 150, 50, 2, BLACK);
+  
+  // Clear timer
+  TSC.drawString(_hour, 20, 80, 2, BLACK);
+  TSC.drawString(_minute, 65, 80, 2, BLACK);
+  TSC.drawString(_second, 110, 80, 2, BLACK);
 }
 
 
