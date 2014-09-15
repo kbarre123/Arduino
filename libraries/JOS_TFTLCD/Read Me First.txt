@@ -1,0 +1,36 @@
+Welcome to the world of "JOS"
+
+developed By Jeremy Saglimbeni
+"JOS" is the best menu system yet build for Adafruit's 2.8 TFTLCD Touch with an arduino.
+There are many great functions used within JOS. Some more advanced than others 
+But, almost every thing is commented to help exlpain what they do so you can learn and use.
+You may use JOS for any project you like non-commerically.
+
+But between Myself (Nathan Sobieck) Aka "Sobiguy" Sobisource.com
+and (Jeremy Saglimbeni) aka "jersagfast" thecustomgeek.com
+
+We have spend A lot of time on this so just share the credit.
+Thx
+
+1. Move All folders Into your libaraies folder. Where ever you have your arduino IDE program.
+Folder List:
+Adafruit_GFX
+Adafruit_TFTLCD
+JOS_TFTLCD
+Touch_Screen
+
+
+
+
+2.JOS Uses Your eeprom to store info.
+  So if anything else is stored there the first time you run JOS it can cause problems.
+  Included with JOS is a EEprom.Clear Sketch.
+
+*)) Important  ((* Run the eeprom_clear Sketch First! before you install JOS.
+
+The "eeprom_clear Sketch" zeros out all of your eeprom. This makes sure that nothing will messup the first time. As JOS has to fully boot in order to read and write to eeprom the first time...
+
+when JOS Runs the first time some default values will be placed in eeprom for "backlight" and "Sleep"
+
+3. Once you have JOS uploaded.  ENJOY!!!!
+ 
