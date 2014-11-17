@@ -1,43 +1,43 @@
 /*
 TouchScreenMenu Library, 2012 Copyright (c) Scott Shaver
  */
-#include <TouchScreenMenu.h>     // https://code.google.com/p/touch-screen-menu-library/
-#include <TouchScreen.h>         // https://github.com/adafruit/Touch-Screen-Library
-#include <TFT.h>
-#include <cstddef.h>
-#include <stdint.h>
-#include <OneWire.h>             // Get 1-wire Library here: http://www.pjrc.com/teensy/td_libs_OneWire.html
-#include <DallasTemperature.h>   // Get DallasTemperature Library here:  http://milesburton.com/Main_Page?title=Dallas_Temperature_Control_Library
-#include <Pitches.h>             // Taken from the Arduino website
+//#include <TouchScreenMenu.h>     // https://code.google.com/p/touch-screen-menu-library/
+//#include <TouchScreen.h>         // https://github.com/adafruit/Touch-Screen-Library
+//#include <TFT.h>
+//#include <cstddef.h>
+//#include <stdint.h>
+//#include <OneWire.h>             // Get 1-wire Library here: http://www.pjrc.com/teensy/td_libs_OneWire.html
+//#include <DallasTemperature.h>   // Get DallasTemperature Library here:  http://milesburton.com/Main_Page?title=Dallas_Temperature_Control_Library
+//#include <Pitches.h>             // Taken from the Arduino website
 
 /******************* MENU SETUP ***********************/
 // create the array of items for the main menu
-TouchScreenMenuItem mainMenuItems[] = {
-  TouchScreenMenuItem("Water Chem"),
-  TouchScreenMenuItem("Start"),
-  TouchScreenMenuItem("ENDOFMENU")
-};
+//TouchScreenMenuItem mainMenuItems[] = {
+//  TouchScreenMenuItem("Water Chem"),
+//  TouchScreenMenuItem("Start"),
+//  TouchScreenMenuItem("ENDOFMENU")
+//};
 
 // create the array of items for the first sub menu
-TouchScreenMenuItem waterItems[] = {
-  TouchScreenMenuItem("Back"),
-  TouchScreenMenuItem("Pale Ale"),
-  TouchScreenMenuItem("Amber/ESB"),
-  TouchScreenMenuItem("Brown/Porter"),
-  TouchScreenMenuItem("Stout"),
-  TouchScreenMenuItem("ENDOFMENU")
-};
+//TouchScreenMenuItem waterItems[] = {
+//  TouchScreenMenuItem("Back"),
+//  TouchScreenMenuItem("Pale Ale"),
+//  TouchScreenMenuItem("Amber/ESB"),
+//  TouchScreenMenuItem("Brown/Porter"),
+//  TouchScreenMenuItem("Stout"),
+//  TouchScreenMenuItem("ENDOFMENU")
+//};
 
 // create the various menus setting the items, font size, spacing, padding, justification and titles
-TouchScreenMenu waterMenu = TouchScreenMenu(waterItems, 2, 15, 10, CENTERJ, "Water Chem");
-TouchScreenMenu mainMenu = TouchScreenMenu(mainMenuItems, 2, 20, 20, CENTERJ, "Main Menu");
+//TouchScreenMenu waterMenu = TouchScreenMenu(waterItems, 2, 15, 10, CENTERJ, "Water Chem");
+//TouchScreenMenu mainMenu = TouchScreenMenu(mainMenuItems, 2, 20, 20, CENTERJ, "Main Menu");
 
 // keep track of which menu is the currently active one
-TouchScreenMenu *curMenu = &mainMenu;
+//TouchScreenMenu *curMenu = &mainMenu;
 
 // Buttons for non-menu screens that are only monitored if curMenu=NULL (i.e. not on a menu screen)
-TouchScreenArea backBtn =  TouchScreenButton("Back",  WHITE, BLACK, 20, TSC.getScreenHeight() - 50, 2, 10);
-TouchScreenArea resetBtn = TouchScreenButton("Reset", WHITE, BLACK, 125, TSC.getScreenHeight() - 50, 2, 10);
+//TouchScreenArea backBtn =  TouchScreenButton("Back",  WHITE, BLACK, 20, TSC.getScreenHeight() - 50, 2, 10);
+//TouchScreenArea resetBtn = TouchScreenButton("Reset", WHITE, BLACK, 125, TSC.getScreenHeight() - 50, 2, 10);
 
 /******************* TIMER SETUP *************************/
 long interval = 1000;  // Threshold at which to update the Timer
@@ -144,11 +144,11 @@ void setup(void) {
   previousMillis = millis();
   
   // Change the default background color
-  TSC.setBackColor(BLACK);
+  //TSC.setBackColor(BLACK);
   // Make sure everything get initialized
-  TSC.init();
+  //TSC.init();
   // Put up the main menu
-  curMenu->draw();
+  //curMenu->draw();
 }
 
 void loop(void) {
@@ -176,7 +176,7 @@ void loop(void) {
   //Serial.println(""); // DEBUG
 }
 
-// check to see if any menu item was pressed and do something
+/*// check to see if any menu item was pressed and do something
 void checkMenuSelection(TouchScreenMenuItem *item) {
   //Serial.println("Enter checkMenuSelection()"); // DEBUG
   boolean handled = false;
@@ -294,7 +294,7 @@ void checkButtons(){
   }
   //Serial.println("Exit checkButtons()"); // DEBUG
 }
-
+*/
 // Update the timer displayed on "Start" screen
 void updateTimer()
 {
