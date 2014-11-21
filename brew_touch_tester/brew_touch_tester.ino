@@ -72,7 +72,8 @@ void setup()
 {
   Serial.begin(9600);
   Tft.init();
-  Tft.setDisplayDirect(UP2DOWN);
+  //Tft.setOrientation(0);
+  //Tft.setDisplayDirect(UP2DOWN);
   Tft.paintScreenBlack();
 
   // Scott's menu init stuff

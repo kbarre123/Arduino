@@ -58,6 +58,7 @@ void loop(void) {
      Serial.print("Raw X = "); Serial.print(p.x);
      Serial.print("\tRaw Y = "); Serial.print(p.y);
      Serial.print("\tPressure = "); Serial.println(p.z);
+     Serial.println(" ");
   }
   
  
@@ -70,6 +71,7 @@ void loop(void) {
      Serial.print("X = "); Serial.print(p.x);
      Serial.print("\tY = "); Serial.print(p.y);
      Serial.print("\tPressure = "); Serial.println(p.z);
+     Serial.println(" ");
   }
 
   delay(100);
