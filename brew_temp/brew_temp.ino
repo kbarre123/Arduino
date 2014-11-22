@@ -3,10 +3,12 @@
  * Plan migration from breadboard to project board; plan mounting of LCD/Arduino/project board inside brew station.
  */
 
+/*
 #include <OneWire.h>             // Get 1-wire Library here: http://www.pjrc.com/teensy/td_libs_OneWire.html
 #include <DallasTemperature.h>   // Get DallasTemperature Library here:  http://milesburton.com/Main_Page?title=Dallas_Temperature_Control_Library
 #include <LiquidCrystal.h>       // Taken from the Arduino website
 #include <Pitches.h>             // Taken from the Arduino website
+*/
 
 /********** SENSORS **********/
 // DS18B20 Pinout (Left to Right, pins down, flat side toward you)
@@ -22,6 +24,7 @@
 // Sensor B: 0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58
 
 // Define data pin for OneWire bus (all sensors parallel on this pin)
+/*
 #define ONE_WIRE_BUS_PIN 12
 // Instantiate OneWire object
 OneWire ds(ONE_WIRE_BUS_PIN);
@@ -36,9 +39,10 @@ DeviceAddress SensorA = {
 DeviceAddress SensorB = { 
   0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58 
 };
-
+*/
 /********** RGB LED **********/
 // See LED_RGB sketch for pinout and resistor documentation
+/*
 #define RED_PIN 11
 #define GREEN_PIN 10
 #define BLUE_PIN 9
@@ -46,17 +50,18 @@ DeviceAddress SensorB = {
 // Vars to store temps read from sensors
 float tempBoil;
 float tempMash;
-
+*/
 /********** LCD DISPLAY **********/
 // Pin name on LCD:     { VSS, VDD, VO,       RS, RW,  E, D0, D1, D2, D3, D4, D5, D6, D7, A,   K   }
 // Pin name on Arduino: { Gnd, Vcc, 50k pot*, 2,  Gnd, 3, NA, NA, NA, NA, 4,  5,  6,  7,  Vcc, Grd }
 // *50k pot uses ground-to-ground and wiper-to VO pin on LCD shield
 
 // Initialize LCD Display object
-LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
+//LiquidCrystal lcd(2, 3, 4, 5, 6, 7);
 
 /**************** BUZZER ****************/
 // Hook Grd on buzzer to Grd, other to pin; no resistor used
+/*
 #define buzzerPin 8
 int notes[] = {  // Notes in the melody:
   NOTE_C8
@@ -67,48 +72,48 @@ int notesSize = sizeof(notes) / sizeof(int);
 int notesLength[] = {  // Note durations: 4 = quarter note, 8 = eighth note, etc.:
   4
 };
-
+*/
 /******* SWITCH B/T 5 & 10 GALLON BATCHES *******/
 // Define switch pin
-#define SWITCH_PIN 13
+//#define SWITCH_PIN 13
 
 // Var to store which boil target, depending on size of batch (10 vs. 5 gallons). See switch statement.
-int boilTarget;
-int batchSize;
+//int boilTarget;
+//int batchSize;
 
 // Var to store "room temp" for use in calculation of indicator intervals
-#define ROOM_TEMP 80
+//#define ROOM_TEMP 80
 
 // Var to store indicator interval step sizes
-int indicatorStep;
+//int indicatorStep;
 
 void setup() 
 {
-  Serial.begin(9600);
+  //Serial.begin(9600);
   // Fire up LCD (16 chars wide, 2 rows deep)
-  lcd.begin(16, 2);
+  //lcd.begin(16, 2);
 
   // Fire up the sensors
-  sensors.begin();
+  //sensors.begin();
   // Set the resolution to 10 bit (Can be 9 to 12 bits .. lower is faster)
-  sensors.setResolution(SensorA, 10);
-  sensors.setResolution(SensorB, 10); 
+  //sensors.setResolution(SensorA, 10);
+  //sensors.setResolution(SensorB, 10); 
 
   // Declare pin modes
-  pinMode(RED_PIN, OUTPUT);
-  pinMode(GREEN_PIN, OUTPUT);
-  pinMode(BLUE_PIN, OUTPUT);
-  pinMode(SWITCH_PIN, INPUT);
+  //pinMode(RED_PIN, OUTPUT);
+  //pinMode(GREEN_PIN, OUTPUT);
+  //pinMode(BLUE_PIN, OUTPUT);
+  //pinMode(SWITCH_PIN, INPUT);
 
-  Serial.print("Initializing Temperature Control Library Version ");
-  Serial.println(DALLASTEMPLIBVERSION);
-  Serial.print("Number of Devices found on bus = ");  
-  Serial.println(sensors.getDeviceCount());
-  Serial.println("");
+  //Serial.print("Initializing Temperature Control Library Version ");
+  //Serial.println(DALLASTEMPLIBVERSION);
+  //Serial.print("Number of Devices found on bus = ");  
+  //Serial.println(sensors.getDeviceCount());
+  //Serial.println("");
   
   // Depending on state of toggle-switch, boilTarget is assigned a different value
   // to compensate for different temps needed to brew a 10 vs. 5 gallon batch.
-  switch (digitalRead(SWITCH_PIN)) 
+  /*switch (digitalRead(SWITCH_PIN)) 
   {
     case 0:
       // If switch is set to 10 gallons, boilTarget is this
@@ -125,12 +130,13 @@ void setup()
       boilTarget = 170;
       batchSize = 5;
   } // END
-  
+  */
   // This presumes 3 LED states: > boilTarget = red; > indicatorStep = green; else blue.
   // Would have to change this formula if more indication steps are needed.
-  indicatorStep = (boilTarget - ROOM_TEMP) / 2;
+  //indicatorStep = (boilTarget - ROOM_TEMP) / 2;
   
   // Print boot message
+  /*
   lcd.clear();
   setColor(255, 0, 0);
   lcd.print("* Bebop Robot *");
@@ -139,12 +145,12 @@ void setup()
   lcd.print("Let's Brew This!");
   delay(2000);
   lcd.clear();
-  
+  */
   // Print boot message to Serial
-  Serial.print("Batch Size: ");
-  Serial.print(batchSize);
-  Serial.println(" gal.");
-  
+  //Serial.print("Batch Size: ");
+  //Serial.print(batchSize);
+  //Serial.println(" gal.");
+  /*
   Serial.print("boilTarget: ");
   Serial.print(boilTarget);
   Serial.println(" *F");
@@ -153,15 +159,16 @@ void setup()
   Serial.print("ROOM_TEMP: ");
   Serial.print(ROOM_TEMP);
   Serial.println(" *F");
-  
+  */
   // DEBUG: Keep only for initial debugging; delete once not needed
-  Serial.print("indicatorStep: ");
-  Serial.println(indicatorStep);
+  //Serial.print("indicatorStep: ");
+  //Serial.println(indicatorStep);
   
-  Serial.print("SWITCH_PIN reading: ");
-  Serial.println(digitalRead(SWITCH_PIN));
+  //Serial.print("SWITCH_PIN reading: ");
+  //Serial.println(digitalRead(SWITCH_PIN));
   // END DEBUG
 
+  /*
   // Print batch-specific variables on LCD
   lcd.print("Target:  ");
   lcd.print(boilTarget);
@@ -170,7 +177,7 @@ void setup()
   lcd.print(batchSize);
   delay(5000);
   lcd.clear();
-  
+  */
   Serial.println("Getting temperatures... ");
   Serial.println("");
 
@@ -178,11 +185,12 @@ void setup()
 
 void loop() 
 {
+  /*
   // Command all devices on bus to read temperature  
   sensors.requestTemperatures();
   tempBoil = readTemp(SensorA);
   tempMash = readTemp(SensorB);
-
+*/
   // Print temps to Serial & LCD
   printTemps();
   
@@ -202,12 +210,13 @@ void loop()
  * @param the address of the sensor to be read.
  * @return the temperature, in Ferenheit.
  */
-float readTemp(DeviceAddress deviceAddress)
+/*float readTemp(DeviceAddress deviceAddress)
 {
   float tempC = sensors.getTempC(deviceAddress);
   float tempF = DallasTemperature::toFahrenheit(tempC);
   return tempF;
 } // END
+*/
 
 /**
  * Print temperatures to Serial & LCD.
@@ -239,7 +248,7 @@ void printTemps()
 /** 
  * Set the LED to a particular RGB value.
  * @param red, green and blue values.
- */
+ 
 void setColor(int red, int green, int blue)
 {
   red = 255 - red;
@@ -249,6 +258,7 @@ void setColor(int red, int green, int blue)
   analogWrite(GREEN_PIN, green);
   analogWrite(BLUE_PIN, blue);
 } // END
+*/
 
 /** 
  * Test the temperature and indicate accordingly.
