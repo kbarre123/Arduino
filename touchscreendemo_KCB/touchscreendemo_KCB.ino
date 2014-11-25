@@ -75,6 +75,13 @@ int curMenu;
 // Variables to store temps read from sensors
 float tempBoil;
 float tempMash;
+float oldTempBoil;
+float oldTempMash;
+// Buffers to store the results of dtostrf. I'm casting a float to a string for printing to screen.
+char textBoil[8];
+char textMash[8];
+char oldTextBoil[8];
+char oldTextMash[8];
 
 /****************************** END SETUP *************************************/
 
@@ -131,7 +138,6 @@ void loop(void)
     Serial.print("\ty = "); Serial.print(p.y);
     Serial.print("\tz = "); Serial.println(p.z);
 
-    // Check to see if a button was pressed
     if (curMenu == 0) // Main Menu
     {
       if (p.y >= 90 && p.y <= 230)
@@ -141,6 +147,7 @@ void loop(void)
           curMenu = 1; // H2O menu
           printMenu(curMenu);
           Serial.println("H2O");
+          Serial.print("curMenu = "); Serial.println(curMenu);
           Serial.println("");
 
           // Used to 'clear out' the old p to prevent 'double clicking' 
@@ -154,6 +161,7 @@ void loop(void)
           curMenu = 2; // Start menu
           printMenu(curMenu);
           Serial.println("Start");
+          Serial.print("curMenu = "); Serial.println(curMenu);
           Serial.println("");
           p = ts.getPoint(); 
         }
@@ -168,6 +176,7 @@ void loop(void)
           curMenu = 3;
           printMenu(curMenu);
           Serial.println("Pale Ale");
+          Serial.print("curMenu = "); Serial.println(curMenu);
           Serial.println("");
         }
         if (p.x >= 128 && p.x <= 168)
@@ -175,6 +184,7 @@ void loop(void)
           curMenu = 4;
           printMenu(curMenu);
           Serial.println("Amber/ESB");
+          Serial.print("curMenu = "); Serial.println(curMenu);
           Serial.println("");
         }
         if (p.x >= 72 && p.x <= 112)
@@ -182,6 +192,7 @@ void loop(void)
           curMenu = 5;
           printMenu(curMenu);
           Serial.println("Brown/Porter");
+          Serial.print("curMenu = "); Serial.println(curMenu);
           Serial.println("");
         }
         if (p.x >= 16 && p.x <= 56)
@@ -189,6 +200,7 @@ void loop(void)
           curMenu = 6;
           printMenu(curMenu);
           Serial.println("Stout");
+          Serial.print("curMenu = "); Serial.println(curMenu);
           Serial.println("");
         }
       }
@@ -199,11 +211,12 @@ void loop(void)
           curMenu = 0;
           printMenu(curMenu);
           Serial.println("Back");
+          Serial.print("curMenu = "); Serial.println(curMenu);
           Serial.println("");
         }
       }
     }
-    if (curMenu == 2 || curMenu == 3 || curMenu == 4 || curMenu == 5 || curMenu == 6)
+    if (curMenu == 2 || curMenu == 3 || curMenu == 4 || curMenu == 5 || curMenu == 6) // Back button
     {
       if (p.y >= 254 && p.y <= 314)
       {
@@ -212,6 +225,7 @@ void loop(void)
           curMenu = 1;
           printMenu(curMenu);
           Serial.println("Back");
+          Serial.print("curMenu = "); Serial.println(curMenu);
           Serial.println("");
         }
       }
@@ -220,9 +234,21 @@ void loop(void)
 
   if (curMenu == 2) // Start
   {
-    
+    delay(1000);
+    Serial.println("Enter Start loop");
+    oldTempBoil = tempBoil;
+    oldTempMash = tempMash;
+    sensors.requestTemperatures();
+    tempBoil = readTemp(SensorA);
+    tempMash = readTemp(SensorB);
+    printTemps();
+    Serial.println("Exit Start loop");
+    Serial.println("");
   }
-  delay(100);
+  if (curMenu != 2)
+  {
+    delay(100);
+  }
 }
 
 /********************* USER DEFINED FUNCTIONS *********************************/
@@ -243,24 +269,34 @@ float readTemp(DeviceAddress deviceAddress)
  */
 void printTemps()
 {
-  // Print temps to Serial
-  Serial.print("Boil Temp: ");
-  Serial.print(tempBoil);
-  Serial.println(" *F");
+  // Test to see if char has changed and refresh only if needed.
 
-  Serial.print("Mash Temp: ");
-  Serial.print(tempMash);
-  Serial.println(" *F");
-  Serial.println("");
+  // Convert sensor data from float to string for display on screen.
+  Serial.print("oldTempBoil: "); Serial.println(oldTempBoil);
+  Serial.print("oldTempMash: "); Serial.println(oldTempMash);
+  dtostrf(oldTempBoil, 1, 2, oldTextBoil);  // Arguments are (float, width, precision, buffer)
+  dtostrf(oldTempMash, 1, 2, oldTextMash);
+  Serial.print("oldTextBoil: "); Serial.println(oldTextBoil);
+  Serial.print("oldTextMash: "); Serial.println(oldTextMash);
+  Tft.drawString(oldTextBoil, 175, 150, 2, BLACK);
+  Tft.drawString(oldTextMash, 75, 150, 2, BLACK);
 
-  // Test print; need to dtostr the floats first
-  Tft.drawString("tempA", 180, 125, 2, WHITE);
-  Tft.drawString("tempB", 80, 125, 2, WHITE);
+  Serial.print("tempBoil: "); Serial.println(tempBoil);
+  Serial.print("tempMash: "); Serial.println(tempMash);
+  dtostrf(tempBoil, 1, 2, textBoil);
+  dtostrf(tempMash, 1, 2, textMash);
+  Serial.print("textBoil: "); Serial.println(textBoil);
+  Serial.print("textMash: "); Serial.println(textMash);
+  Tft.drawString(textBoil, 175, 150, 2, WHITE);
+  Tft.drawString(textMash, 75, 150, 2, WHITE);
 }
 
+/**
+ * Print menu to screen.
+ */
 void printMenu(int m)
 {
-  if (m == 0)
+  if (m == 0) // Main menu
   {
     Tft.paintScreenBlack();
     Tft.fillRectangle(140, 90, 60, 140, BLUE); // {y,x,h,w,color}
@@ -268,7 +304,7 @@ void printMenu(int m)
     Tft.fillRectangle(40, 90, 60, 140, GREEN);
     Tft.drawString("Start", 80, 105, 3, BLACK);
   }
-  if (m == 1)
+  if (m == 1) // H2O menu
   {
     Tft.paintScreenBlack();
     Tft.fillRectangle(184, 10, 40, 236, BLUE);
@@ -289,12 +325,11 @@ void printMenu(int m)
     Tft.drawString("C", 100, 274, 3, WHITE);
     Tft.drawString("K", 60, 274, 3, WHITE);
   }
-  if (m == 2)
+  if (m == 2) // Start screen
   {
     Tft.paintScreenBlack();
-    Tft.drawString("Mash:", 210, 16, 3, WHITE);
-    Tft.drawString("Boil:", 160, 16, 3, WHITE);
-    Tft.drawString("Time:", 40, 16, 3, WHITE);
+    Tft.drawString("Mash:", 180, 16, 3, WHITE);
+    Tft.drawString("Boil:", 80, 16, 3, WHITE);
 
     Tft.fillRectangle(16, 254, 208, 60, RED);
     Tft.drawString("B", 180, 274, 3, WHITE);
@@ -302,7 +337,7 @@ void printMenu(int m)
     Tft.drawString("C", 100, 274, 3, WHITE);
     Tft.drawString("K", 60, 274, 3, WHITE);
   }
-  if (m == 3)
+  if (m == 3) // Pale Ale page
   {
     Tft.paintScreenBlack();
     Tft.drawString("Pale Ale    5gal   10gal", 210, 10, 1, RED);
@@ -319,7 +354,7 @@ void printMenu(int m)
     Tft.drawString("C", 100, 274, 3, WHITE);
     Tft.drawString("K", 60,  274, 3, WHITE);
   }
-  if (m == 4)
+  if (m == 4) // Amber/ESB page
   {
     Tft.paintScreenBlack();
     Tft.drawString("Amber/ESB    5gal   10gal", 210, 10, 1, RED);
@@ -336,7 +371,7 @@ void printMenu(int m)
     Tft.drawString("C", 100, 274, 3, WHITE);
     Tft.drawString("K", 60,  274, 3, WHITE);
   }
-  if (m == 5)
+  if (m == 5) // Brown/Porter page
   {
     Tft.paintScreenBlack();
     Tft.drawString("Brwn/Prtr    5gal   10gal", 210, 10, 1, RED);
@@ -353,7 +388,7 @@ void printMenu(int m)
     Tft.drawString("C", 100, 274, 3, WHITE);
     Tft.drawString("K", 60,  274, 3, WHITE);
   }
-  if (m == 6)
+  if (m == 6) // Stout page
   {
     Tft.paintScreenBlack();
     Tft.drawString("Stout        5gal   10gal", 225, 10, 1, RED);
