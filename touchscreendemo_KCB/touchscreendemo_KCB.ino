@@ -78,10 +78,10 @@ float tempMash;
 float oldTempBoil;
 float oldTempMash;
 // Buffers to store the results of dtostrf. I'm casting a float to a string for printing to screen.
-char textBoil[8];
-char textMash[8];
-char oldTextBoil[8];
-char oldTextMash[8];
+char textBoil[7];
+char textMash[7];
+char oldTextBoil[7];
+char oldTextMash[7];
 
 /****************************** END SETUP *************************************/
 
@@ -104,11 +104,11 @@ void setup(void)
   Serial.print("curMenu = "); Serial.println(curMenu);
   Serial.println("");
 
-  // Fire up the temp sensors
+  // Init the temp sensors
   sensors.begin();
-  // Set the resolution to 10 bit (Can be 9 to 12 bits .. lower is faster)
-  sensors.setResolution(SensorA, 10);
-  sensors.setResolution(SensorB, 10); 
+  // Set the resolution; can be 9 to 12 bits .. lower is faster
+  sensors.setResolution(SensorA, 9);
+  sensors.setResolution(SensorB, 9); 
   Serial.print("Initializing Temperature Control Library Version: ");
   Serial.println(DALLASTEMPLIBVERSION);
   Serial.print("Number of Devices found on bus: ");  
@@ -269,8 +269,6 @@ float readTemp(DeviceAddress deviceAddress)
  */
 void printTemps()
 {
-  // Test to see if char has changed and refresh only if needed.
-
   // Convert sensor data from float to string for display on screen.
   Serial.print("oldTempBoil: "); Serial.println(oldTempBoil);
   Serial.print("oldTempMash: "); Serial.println(oldTempMash);
@@ -278,8 +276,6 @@ void printTemps()
   dtostrf(oldTempMash, 1, 2, oldTextMash);
   Serial.print("oldTextBoil: "); Serial.println(oldTextBoil);
   Serial.print("oldTextMash: "); Serial.println(oldTextMash);
-  Tft.drawString(oldTextBoil, 175, 150, 2, BLACK);
-  Tft.drawString(oldTextMash, 75, 150, 2, BLACK);
 
   Serial.print("tempBoil: "); Serial.println(tempBoil);
   Serial.print("tempMash: "); Serial.println(tempMash);
@@ -287,8 +283,54 @@ void printTemps()
   dtostrf(tempMash, 1, 2, textMash);
   Serial.print("textBoil: "); Serial.println(textBoil);
   Serial.print("textMash: "); Serial.println(textMash);
-  Tft.drawString(textBoil, 175, 150, 2, WHITE);
-  Tft.drawString(textMash, 75, 150, 2, WHITE);
+
+  // THIS IS THE LAZY WAY BUT IT WORKS!!
+  /* Test to see if char has changed and refresh only if needed.
+  if (oldTempBoil != tempBoil)
+  {
+    Tft.drawString(oldTextBoil, 175, 150, 2, BLACK);
+    Tft.drawString(textBoil, 175, 150, 2, WHITE);
+  }
+  else
+  {
+    Tft.drawString(textBoil, 175, 150, 2, WHITE); 
+  }
+
+  if (oldTempMash != tempMash)
+  {
+    Tft.drawString(oldTextMash, 75, 150, 2, BLACK);
+    Tft.drawString(textMash, 75, 150, 2, WHITE);
+  }
+  else
+  {
+    Tft.drawString(textMash, 75, 150, 2, WHITE);
+  }*/
+
+  for (int i = 0; i < sizeof(oldTextBoil) - 1; ++i)
+  {
+    if (oldTextBoil[i] != textBoil[i])
+    {
+      Tft.drawChar(oldTextBoil[i], 175, (150 + (13*i)), 2, BLACK);
+      Tft.drawChar(textBoil[i], 175, (150 + (13*i)), 2, WHITE);
+    }
+    else
+    {
+      Tft.drawChar(oldTextBoil[i], 175, (150 + (13*i)), 2, WHITE); 
+    }
+  }
+
+  for (int i = 0; i < sizeof(oldTextMash) - 1; ++i)
+  {
+    if (oldTextMash[i] != textMash[i])
+    {
+      Tft.drawChar(oldTextMash[i], 75, (150 + (13*i)), 2, BLACK);
+      Tft.drawChar(textMash[i], 75, (150 + (13*i)), 2, WHITE);
+    }
+    else
+    {
+      Tft.drawChar(oldTextMash[i], 75, (150 + (13*i)), 2, WHITE);
+    }
+  }
 }
 
 /**
