@@ -30,7 +30,7 @@ int channels[] =
 
 // Define number of channels.
 #define CHANNEL_COUNT 16
-#define RANDOM_COUNT 10
+#define RANDOM_COUNT 50
 
 void setup()
 {
@@ -41,9 +41,9 @@ void setup()
 }
 
 void loop()
-{   
+{
   testLights();
-  delay(120000);
+  delay(300000);
   doRandomLights();
   turnOffLights();
   delay(5000);
@@ -72,7 +72,7 @@ void doRandomLights()
         digitalWrite(channels[i], HIGH);
       else
         digitalWrite(channels[i], LOW);
-      delay(250);
+      delay(50);
     }  
   }
 }
