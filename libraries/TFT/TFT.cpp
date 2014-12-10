@@ -402,7 +402,8 @@ void TFT::drawChar(unsigned char ascii,unsigned int poX, unsigned int poY,unsign
     
     if((ascii < 0x20)||(ascii > 0x7e))//Unsupported char.
     {
-        ascii = '?';
+        //ascii = '?';
+        ascii = ' ';
     }
     for(unsigned char i=0;i<8;i++)
     {
