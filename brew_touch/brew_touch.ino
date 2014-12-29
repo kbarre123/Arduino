@@ -140,6 +140,11 @@ void printTemperature(DeviceAddress deviceAddress)
   }
 
   /* Sample Output
-  * TODO: copy sample output once finalized
+  Initializing Temperature Control Library Version 3.7.2
+  Number of devices found on bus = 2
+  Getting temperatures...
+
+  Probe A:  C: 24.75  F: 76.55  Time: 4
+  Probe B:  C: 24.00  F: 75.20  Time: 4
   */
 }
