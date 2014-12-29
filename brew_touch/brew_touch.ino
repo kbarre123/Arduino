@@ -8,10 +8,10 @@
 
  /******************************************************************
  * Connections for sensors:
- * DS18B20 Pinout (Left to Right, pins down, flat side toward you)
- * - Left   = Ground
- * - Center = Signal (Pin 2):  (with 3.3K to 4.7K resistor to +5 or 3.3 )
- * - Right  = +5 or +3.3 V
+ * DS18B20 Pinout:
+ * - Black   = Ground
+ * - Orange  = Signal (with 3.3K to 4.7K resistor to +5 or 3.3 )
+ * - Red     = +5 or +3.3 V                                               
  *******************************************************************/
 
 #include <stdint.h>
@@ -42,7 +42,7 @@
 /********************************************************************
 * Set up oneWire sensors and pass them to the Dallas Temp library
 ********************************************************************/
-#define ONE_WIRE_BUS_PIN 11
+#define ONE_WIRE_BUS_PIN 22
 OneWire oneWire(ONE_WIRE_BUS_PIN); // Setup a oneWire instance to communicate with any OneWire devices
 DallasTemperature sensors(&oneWire); // Pass oneWire pointer to Dallas Temperature.
 
@@ -54,10 +54,8 @@ DeviceAddress ProbeB = {
   0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58 
 };
 
-float tempUpper = 0;
-float tempMash = 0;
-int DS18S20_Pin = 22; //DS18S20 Signal pin
-OneWire ds(DS18S20_Pin); //Temperature chip i/o
+//float tempUpper = 0;
+//float tempMash = 0;
 
 void setup()
 {
@@ -76,20 +74,19 @@ void setup()
   Serial.print("Number of devices found on bus = ");  
   Serial.println(sensors.getDeviceCount());
   Serial.print("Getting temperatures...");  
-  Serial.println();   
+  Serial.println("\n\r");
 }
 
 void loop()
 {
   delay(1000);
   sensors.requestTemperatures(); // Command all devices on bus to read temperature
-  Serial.print("Probe A:  ");
+  Serial.print("Probe A:\t");
   printTemperature(ProbeA);
   Serial.println();
-
-  Serial.print("Probe B:  ");
+  Serial.print("Probe B:\t");
   printTemperature(ProbeB);
-  Serial.println();
+  Serial.println("\n\r");
 
   // OLD CODE HERE; DON'T DELETE YET!!!
   /* Convert sensor data of Upper Pot to string for display. 
