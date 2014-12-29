@@ -54,9 +54,16 @@ DeviceAddress ProbeB = {
   0x28, 0xC0, 0x98, 0x05, 0x06, 0x00, 0x00, 0x58 
 };
 
+/********************************************************************
+* Global Variables
+********************************************************************/
+unsigned long sysTime;
 //float tempUpper = 0;
 //float tempMash = 0;
 
+/********************************************************************
+* Set Up
+********************************************************************/
 void setup()
 {
   Serial.begin(9600);
@@ -77,6 +84,9 @@ void setup()
   Serial.println("\n\r");
 }
 
+/********************************************************************
+* Main Loop
+********************************************************************/
 void loop()
 {
   delay(1000);
@@ -107,9 +117,8 @@ void loop()
 }
 
 /*******************************************************************
-* USER DEFINED FUNCTIONS
+* User Defined Functions
 ********************************************************************/
-
 void printTemperature(DeviceAddress deviceAddress)
 {
 
@@ -123,8 +132,11 @@ void printTemperature(DeviceAddress deviceAddress)
   {
     Serial.print("C: ");
     Serial.print(tempC);
-    Serial.print(" F: ");
+    Serial.print("\tF: ");
     Serial.print(DallasTemperature::toFahrenheit(tempC));
+    Serial.print("\tTime: ");
+    sysTime = millis();
+    Serial.println(sysTime / 1000);
   }
 
   /* Sample Output
