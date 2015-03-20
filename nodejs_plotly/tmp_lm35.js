@@ -2,7 +2,7 @@ var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require("johnny-five");
 var brew_bot = new five.Board();
 
-var data = [{x:[], y:[], stream:{token:'wboncpxs1m', maxpoints:1000}}];
+var data = [{x:[], y:[], stream:{token:'wboncpxs1m', maxpoints:18000}}]; // 18000 seconds is 5 hours
 var layout = {fileopt: "extend", filename : "Arduino Temp Stream (LM35)"};
 
 brew_bot.on("ready", function() {
