@@ -2,7 +2,7 @@
 
 These sketches involve using an [Arduino](http://arduino.cc) collecting sensor data and posting it to [Plot.ly](http:plot.ly) via [Nodejs](http://nodejs.org) for real-time streaming of data (via the host-computer's network connection; thanks [Johnny-Five](https://github.com/rwaldron/johnny-five)) without page-refreshes. You know, fancy stuff.
 
-Note that the `node_modules` folder is included in `.gitignore`. When cloning this project, be sure to run `npm install plotly` and `npm install johnny-five` from the root of your project folder. Your project folder should look something like this:
+Note that the `node_modules` folder is included in `.gitignore`. When cloning this project, be sure to run `npm install plotly` and `npm install johnny-five` from the root of your `project_folder`. Your project folder should look something like this:
 
     project_folder
     ├── brew_temp.js
