@@ -2,9 +2,15 @@
 
 These sketches involve using an [Arduino](http://arduino.cc) collecting sensor data and posting it to [Plot.ly](http:plot.ly) via [Nodejs](http://nodejs.org) for real-time streaming of data (via the host-computer's network connection; thanks [Johnny-Five](https://github.com/rwaldron/johnny-five)) without page-refreshes. You know, fancy stuff.
 
-The node modules are shared by tmp36.js and brew_temp.js. I need to merge plotly stuff from tmp36.js into brew_temp.js.
+Note that the `node_modules` folder is included in `.gitignore`. When cloning this project, be sure to run `npm install plotly` and `npm install johnny-five` from the root of your project folder. Your project folder should look something like this:
 
-Note that the node_modules folder is included in .gitignore. When cloning this project, be sure to run `npm install plotly` and `npm install johnny-five` from the root of /nodejs_plotly.
+    project_folder
+    ├── brew_temp.js
+    ├── node_modules
+    │   ├── johnny-five
+    │   └── plotly
+    ├── README.md
+    └── tmp_lm35.js
 
 ##tmp_lm35.js
 
