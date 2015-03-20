@@ -2,8 +2,8 @@ var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require("johnny-five");
 var brew_bot = new five.Board();
 
-var data = [{x:[], y:[], stream:{token:'wboncpxs1m', maxpoints:100}}];
-var layout = {filename : "Arduino Temp Stream"};
+var data = [{x:[], y:[], stream:{token:'wboncpxs1m', maxpoints:1000}}];
+var layout = {fileopt: "extend", filename : "Arduino Temp Stream (LM35)"};
 
 brew_bot.on("ready", function() {
 
@@ -39,10 +39,10 @@ brew_bot.on("ready", function() {
 
 // helper function to convert sensor value to temp
 function convertTemperature (value) {
-  var voltage = value * 0.004882814;
-  var celsius = (voltage - 0.5) * 100;
-  var fahrenheit = celsius * (9 / 5) + 32;
-  return celsius;
+  var milliVolts = (value / 1024.0) * 5000;
+  var celsius = milliVolts / 10;
+  var fahrenheit = ((celsius * 9) / 5) + 32;
+  return fahrenheit;
 }
 
 // little helper function to get a nicely formatted date string
