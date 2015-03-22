@@ -2,8 +2,30 @@ var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require("johnny-five");
 var brew_bot = new five.Board();
 
-var data = [{x:[], y:[], stream:{token:'wboncpxs1m', maxpoints:18000}}]; // 18000 seconds is 5 hours
-var layout = {fileopt: "extend", filename : "Arduino Temp Stream (LM35)"};
+var data = [{
+  x:[], 
+  y:[], 
+  stream:{
+    token:'wboncpxs1m', 
+    maxpoints:1800
+  }
+}];
+
+var layout = { 
+  title: "Arduino Temp Stream (LM35)",
+  xaxis: {
+    title: "Datetime " + getXAxisTime(data[0].stream.maxpoints)
+  },
+  yaxis: {
+    title: "Temperature (*F)"
+  }
+};
+
+var graphOptions = {
+  layout: layout,
+  fileopt: "overwrite", 
+  filename : "Arduino Temp Stream (LM35)",
+};
 
 brew_bot.on("ready", function() {
 
@@ -15,7 +37,7 @@ brew_bot.on("ready", function() {
   });
   
   // initialize the plotly graph
-  plotly.plot(data,layout,function (err, res) {
+  plotly.plot(data, graphOptions, function (err, res) {
     if (err) console.log(err);
     console.log(res);
     //once it's initialized, create a plotly stream
@@ -54,3 +76,15 @@ function getDateString () {
   return datestr;
 }
 
+function getXAxisTime(maxPoints) {
+  var time = 0;
+  var dateTime = "";
+  if (maxPoints > 3600) {
+    time = (maxPoints / 3600).toFixed(2);
+    dateTime = "(Past " + time + " Hours)";
+  } else {
+    time = (maxPoints / 60).toFixed(2);
+    dateTime = "(Past " + time + " Minutes)";
+  }
+  return dateTime;
+}
