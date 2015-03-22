@@ -44,8 +44,8 @@ board.on('ready', function () {
         var celsius = raw / 16.0;
         var fahrenheit = celsius * 1.8 + 32.0;
 
-        console.info('celsius\t\t', celsius.toFixed(2), "ºC");
-        console.info('fahrenheit\t', fahrenheit.toFixed(2), "ºF\n");
+        console.info(getDateString(), 'celsius\t\t', celsius.toFixed(2), "ºC");
+        console.info(getDateString(), 'fahrenheit\t', fahrenheit.toFixed(2), "ºF\n");
       });
     };
     // read the temperature now
@@ -54,3 +54,12 @@ board.on('ready', function () {
     setInterval(readTemperature, 1000);
   });
 });
+
+// helper function to get a nicely formatted date string
+function getDateString () {
+  var time = new Date();
+  // 14400000 is (GMT-4 Montreal)
+  // for your timezone just multiply +/-GMT by 3600000
+  var datestr = new Date(time - 18000000).toISOString().replace(/T/, ' ').replace(/Z/, '');
+  return datestr;
+}
