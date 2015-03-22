@@ -22,4 +22,4 @@ The Arduino is running the (unedited) ConfigurableFirmata sketch. The LM35 senso
 
 ## brew_temp.js
 
-*This is very much a work in progress. The script does not work yet.* The Arduino is running the (unedited) ConfigurableFirmata sketch. There are two DS18B20 water-proof temperature sensors attached. This program is much more complex than the LM35 one, as it involves utilizing the OneWire protocol via wrapper functions in the Johnny-Five node module. I'm still trying to figure it all out and will update accordingly.
+The Arduino is running the (unedited) ConfigurableFirmata sketch. There are two DS18B20 water-proof temperature sensors attached. [Firmata OneWire protocol](https://github.com/firmata/protocol/blob/master/onewire.md) is used to interact with the sensors, via Johnny-Five object. Node performs the backend stuff and Plotly performs the graphical display.

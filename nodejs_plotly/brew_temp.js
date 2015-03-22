@@ -72,7 +72,6 @@ board.on('ready', function () {
         x : getDateString(),
         y : data.fahrenheit
       };
-      //console.log(data.celsius + "°C", data.fahrenheit + "°F");
       console.log(data);
       stream.write(JSON.stringify(data)+'\n');
     });
