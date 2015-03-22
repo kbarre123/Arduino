@@ -1,6 +1,6 @@
 var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require("johnny-five");
-var brew_bot = new five.Board();
+var board = new five.Board();
 
 var data = [{
   x:[], 
@@ -27,7 +27,7 @@ var graphOptions = {
   filename : "Arduino Temp Stream (LM35)",
 };
 
-brew_bot.on("ready", function() {
+board.on("ready", function() {
 
   // create a new tmp36 sensor object
   var tmp36 = new five.Sensor({

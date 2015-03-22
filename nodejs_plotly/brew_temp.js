@@ -8,19 +8,41 @@
  *    - Click 'Upload'
  *
  * https://github.com/rwaldron/johnny-five/issues/285
- */
+ */  
 
-
+var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require('johnny-five'), board
-
+var board = new five.Board();
 // the pin the DS18B20 is connected on
 var pin = 2;
-var board = new five.Board();
+
+// Plotly stuff
+var data = [{
+  x:[], 
+  y:[], 
+  stream:{
+    token:'wboncpxs1m', 
+    maxpoints:1800
+  }
+}];
+
+var layout = { 
+  title: "Arduino Temp Stream (LM35)",
+  xaxis: {
+    title: "Datetime"
+  },
+  yaxis: {
+    title: "Temperature (*F)"
+  }
+};
+
+var graphOptions = {
+  layout: layout,
+  fileopt: "overwrite", 
+  filename : "Arduino Temp Stream (LM35)",
+}; // End Plotly stuff
 
 board.on('ready', function () {
-
-  // var led = new five.Led(8)
-  var led = new five.Led.RGB([9, 10, 11])
 
   board.firmata = board.io;
   board.firmata.sendOneWireConfig(pin, true);
@@ -57,14 +79,42 @@ board.on('ready', function () {
         var raw = (data[1] << 8) | data[0];
         var celsius = raw / 16.0;
         var fahrenheit = celsius * 1.8 + 32.0;
-
-        console.info('celsius', celsius);
-        console.info('fahrenheit', fahrenheit);
+        return fahrenheit;
       });
     };
+    // initialize the plotly graph
+    plotly.plot(data, graphOptions, function (err, res) {
+      if (err) console.log(err);
+      console.log(res);
+      //once it's initialized, create a plotly stream
+      //to pipe your data!
+      var stream = plotly.stream('wboncpxs1m', function (err, res) {
+        if (err) console.log(err);
+        console.log(res);
+      });
+      // this gets called each time there is a new sensor reading
+      readTemperature().on("data", function() {
+        var data = {
+          x : getDateString(),
+          y : this.value
+        };
+        console.log(data);
+        // write the data to the plotly stream
+        stream.write(JSON.stringify(data)+'\n');
+      });
+    });
     // read the temperature now
-    readTemperature();
+    //readTemperature();
     // and every 1 second
-    setInterval(readTemperature, 1000);
+    //setInterval(readTemperature, 1000);
   });
 });
+
+// little helper function to get a nicely formatted date string
+function getDateString () {
+  var time = new Date();
+  // 14400000 is (GMT-4 Montreal)
+  // for your timezone just multiply +/-GMT by 3600000
+  var datestr = new Date(time - 18000000).toISOString().replace(/T/, ' ').replace(/Z/, '');
+  return datestr;
+}
