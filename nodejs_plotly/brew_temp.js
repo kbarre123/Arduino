@@ -16,6 +16,7 @@ var board = new five.Board();
 // the pin the DS18B20 is connected on
 var pin = 2;
 
+
 var data = [{
   x:[], 
   y:[],
@@ -48,11 +49,12 @@ var graphOptions = {
   filename : "Arduino Temp Stream (DS18B20)",
 }; // End Plotly stuff
 
+// Don't do anything until the board is ready for communication.
 board.on('ready', function () {
   // This requires OneWire support using the ConfigurableFirmata
   var temperature = new five.Temperature({
     controller: "DS18B20",
-    pin: 2,
+    pin: pin,
     freq: 1000
   });
 
