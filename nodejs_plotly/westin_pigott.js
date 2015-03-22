@@ -77,7 +77,7 @@ board.on("ready", function () {
             setTimeout(readSingle, 0, 0);       
         };
 
-        // Output the temps every 1/10 second.
+        // Output the temps every second.
         setInterval(outputFTemps, 1000);
 
         // Start the loop to continually read the temps.
