@@ -98,9 +98,9 @@ AnalogInputFirmata analogInput;
 #include <utility/AnalogOutputFirmata.h>
 AnalogOutputFirmata analogOutput;
 
-//#include <Servo.h> //wouldn't load from ServoFirmata.h in Arduino1.0.3
-//#include <utility/ServoFirmata.h>
-//ServoFirmata servo;
+#include <Servo.h> //wouldn't load from ServoFirmata.h in Arduino1.0.3
+#include <utility/ServoFirmata.h>
+ServoFirmata servo;
 
 #include <Wire.h> //wouldn't load from I2CFirmata.h in Arduino1.0.3
 #include <utility/I2CFirmata.h>
@@ -109,8 +109,8 @@ I2CFirmata i2c;
 #include <utility/OneWireFirmata.h>
 OneWireFirmata oneWire;
 
-//#include <utility/StepperFirmata.h>
-//StepperFirmata stepper;
+#include <utility/StepperFirmata.h>
+StepperFirmata stepper;
 
 #include <utility/FirmataExt.h>
 FirmataExt firmataExt;
