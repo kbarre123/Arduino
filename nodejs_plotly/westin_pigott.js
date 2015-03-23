@@ -14,7 +14,7 @@ var outputFTemps = function() {
         var celsius = temps[i] / 16.0;
         out[i] = (celsius * 1.8 + 32.0).toFixed(2);
     }
-    console.log(out);
+    console.log(getDateString(), out);
 }
 
 // Don't do anything until the board is ready for communication.
@@ -85,3 +85,12 @@ board.on("ready", function () {
         readTemperatures();
     });
 });
+
+// helper function to get a nicely formatted date string
+function getDateString () {
+  var time = new Date();
+  // 14400000 is (GMT-4 Montreal)
+  // for your timezone just multiply +/-GMT by 3600000
+  var datestr = new Date(time - 18000000).toISOString().replace(/T/, ' ').replace(/Z/, '');
+  return datestr;
+}
