@@ -29,7 +29,7 @@ board.on('ready', function () {
       board.firmata.sendOneWireWrite(pin, device, 0x44);
 
       // the delay gives the sensor time to do the calculation
-      board.firmata.sendOneWireDelay(pin, 1000);
+      board.firmata.sendOneWireDelay(pin, 1);
 
       // start transmission
       board.firmata.sendOneWireReset(pin);
