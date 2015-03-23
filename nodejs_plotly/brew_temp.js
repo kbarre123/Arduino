@@ -1,14 +1,4 @@
-/**
- * NOTE: this does not run on the built-in firmware. Steps to make it work:
- *  - get and install the arduino IDE from http://arduino.cc/en/Main/Software#toc1
- *  - rm -r /Applications/Arduino.app/Contents/Resources/Java/libraries/Firmata
- *  - git clone git@github.com:firmata/arduino.git --branch configurable --single-branch /Applications/Arduino.app/Contents/Resources/Java/libraries/Firmata
- *  - flash the board with ConfigurableFirmata
- *    - File > Examples > Firmata > ConfigurableFirmata
- *    - Click 'Upload'
- *
- * https://github.com/rwaldron/johnny-five/issues/285
- */  
+
 
 var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require('johnny-five'), board
@@ -35,9 +25,9 @@ var layout = {
   yaxis: {
     title: "Temperature (*F)"
   },
-  autosize: false, // set to 'true'
-  height: 750, // customized for devo screen
-  width: 940, // customized for devo screen
+  autosize: true, // set to 'true' during development; 'false' for customized display on devo
+  //height: 750, // comment out during development; customized for devo screen
+  //width: 940, // comment out during development; customized for devo screen
   showlegend: true,
   legend: {
     x: 1,
