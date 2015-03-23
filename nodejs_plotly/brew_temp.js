@@ -35,10 +35,12 @@ var layout = {
   yaxis: {
     title: "Temperature (*F)"
   },
-  autosize: true,
+  autosize: false, // set to 'true'
+  height: 750, // customized for devo screen
+  width: 940, // customized for devo screen
   showlegend: true,
   legend: {
-    x: 100,
+    x: 1,
     y: 1
   }
 };
