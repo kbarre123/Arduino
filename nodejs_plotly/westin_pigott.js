@@ -1,3 +1,4 @@
+// This program is able to read multiple sensors on the OneWire bus.
 var five = require('johnny-five'), board
 
 var pin = 2;
