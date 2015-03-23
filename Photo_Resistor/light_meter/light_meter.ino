@@ -2,10 +2,10 @@
 Photoresistor(1kohm resistor(Brown, Black, Red)) is reading light and printing to serialOut.
 */
  
-int sensePin = A1;
+int sensePin = 0;
 
 void setup() {
-  analogReference(DEFAULT);
+  //analogReference(DEFAULT);
   Serial.begin(9600);  
 }
 
