@@ -46,8 +46,15 @@ board.on('ready', function () {
   // This requires OneWire support using the ConfigurableFirmata
   var temperature = new five.Temperature({
     controller: "DS18B20",
+    address: 0x60598c0,
     pin: pin,
     freq: 1000
+  });
+  // DEBUG:
+  console.log(board.io.firmware);
+  // Announce all devices on bus
+  temperature.once("data", function() {
+    console.log('Address', this.address.toString(16));
   });
 
   // Initialize the plotly graph
