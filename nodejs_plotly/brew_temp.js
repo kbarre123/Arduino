@@ -16,7 +16,7 @@ var board = new five.Board();
 // the pin the DS18B20 is connected on
 var pin = 2;
 
-
+// Plotly Stuff
 var data = [{
   x:[], 
   y:[],
@@ -58,11 +58,11 @@ board.on('ready', function () {
     freq: 1000
   });
 
-  // initialize the plotly graph
+  // Initialize the plotly graph
   plotly.plot(data, graphOptions, function (err, res) {
     if (err) console.log(err);
     console.log(res);
-    //once it's initialized, create a plotly stream
+    //Once it's initialized, create a plotly stream
     //to pipe your data!
     var stream = plotly.stream('0om2z8lncl', function (err, res) {
       if (err) console.log(err);
