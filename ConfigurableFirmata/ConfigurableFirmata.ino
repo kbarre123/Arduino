@@ -1,3 +1,5 @@
+// NOTE: This is my edited version with unnecessary modules commented out to save space.
+
 /*
  * Firmata is a generic protocol for communicating with microcontrollers
  * from software on a host computer. It is intended to work with
