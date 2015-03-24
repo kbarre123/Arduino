@@ -1,5 +1,3 @@
-
-
 var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require('johnny-five'), board
 var board = new five.Board();
@@ -25,14 +23,14 @@ var layout = {
   yaxis: {
     title: "Temperature (*F)"
   },
-  autosize: true, // set to 'true' during development; 'false' for customized display on devo
+  autosize: true//, // set to 'true' during development; 'false' for customized display on devo
   //height: 750, // comment out during development; customized for devo screen
   //width: 940, // comment out during development; customized for devo screen
-  showlegend: true,
-  legend: {
-    x: 1,
-    y: 1
-  }
+  //showlegend: true,
+  //legend: {
+  //  x: 1,
+  //  y: 1
+  //}
 };
 
 var graphOptions = {
@@ -49,12 +47,6 @@ board.on('ready', function () {
     address: 0x60598c0,
     pin: pin,
     freq: 1000
-  });
-  // DEBUG:
-  console.log(board.io.firmware);
-  // Announce all devices on bus
-  temperature.once("data", function() {
-    console.log('Address', this.address.toString(16));
   });
 
   // Initialize the plotly graph
