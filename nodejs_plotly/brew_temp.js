@@ -11,7 +11,7 @@ var data = [{
   name: 'Top',
   stream:{
     token:'0om2z8lncl', 
-    maxpoints:200
+    maxpoints: 1440
   }
 }];
 
@@ -23,9 +23,9 @@ var layout = {
   yaxis: {
     title: "Temperature (*F)"
   },
-  autosize: true//, // set to 'true' during development; 'false' for customized display on devo
-  //height: 750, // comment out during development; customized for devo screen
-  //width: 940, // comment out during development; customized for devo screen
+  autosize: false, // set to 'true' during development; 'false' for customized display on devo
+  height: 750, // comment out during development; customized for devo screen
+  width: 940//, // comment out during development; customized for devo screen
   //showlegend: true,
   //legend: {
   //  x: 1,
@@ -35,7 +35,7 @@ var layout = {
 
 var graphOptions = {
   layout: layout,
-  fileopt: "overwrite", 
+  fileopt: "extend", 
   filename : "Arduino Temp Stream (DS18B20)",
 }; // End Plotly stuff
 
@@ -46,7 +46,7 @@ board.on('ready', function () {
     controller: "DS18B20",
     address: 0x60598c0,
     pin: pin,
-    freq: 1000
+    freq: 30000
   });
 
   // Initialize the plotly graph
