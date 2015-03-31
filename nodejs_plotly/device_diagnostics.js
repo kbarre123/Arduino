@@ -12,7 +12,6 @@ board.on('ready', function () {
     controller: "DS18B20",
     //address: 0x60630e7, // Probe A
     pin: pin,
-    bus_pos: 1,
     freq: 1000
   });
   
