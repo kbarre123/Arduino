@@ -11,7 +11,7 @@ var data = [{
   name: 'Top',
   stream:{
     token:'0om2z8lncl', 
-    maxpoints: 1440
+    maxpoints: 21600
   }
 }];
 
@@ -23,9 +23,9 @@ var layout = {
   yaxis: {
     title: "Temperature (*F)"
   },
-  autosize: false, // set to 'true' during development; 'false' for customized display on devo
-  height: 750, // comment out during development; customized for devo screen
-  width: 940//, // comment out during development; customized for devo screen
+  autosize: true, // set to 'true' during development; 'false' for customized display on devo
+  //height: 750, // comment out during development; customized for devo screen
+  //width: 940//, // comment out during development; customized for devo screen
   //showlegend: true,
   //legend: {
   //  x: 1,
