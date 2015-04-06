@@ -1,4 +1,10 @@
-var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
+var config = require('./config.json')
+  , username = config['user']
+  , apikey = config['apikey']
+  , token = config['token']
+  , plotly = require('plotly')(username, apikey)
+
+//var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require('johnny-five'), board
 var board = new five.Board();
 // the pin the DS18B20 is connected on
@@ -6,12 +12,21 @@ var pin = 2;
 
 // Plotly Stuff
 var data = [{
-  x:[], 
-  y:[],
+  x1:[], 
+  y1:[],
   name: 'Top',
   stream:{
     token:'0om2z8lncl', 
-    maxpoints: 21600
+    maxpoints: 200
+  }
+},
+{
+  x2:[], 
+  y2:[],
+  name: 'Bottom',
+  stream:{
+    token:'wboncpxs1m', 
+    maxpoints: 200
   }
 }];
 
@@ -35,18 +50,25 @@ var layout = {
 
 var graphOptions = {
   layout: layout,
-  fileopt: "extend", 
+  fileopt: "overwrite", 
   filename : "Arduino Temp Stream (DS18B20)",
 }; // End Plotly stuff
 
 // Don't do anything until the board is ready for communication.
 board.on('ready', function () {
   // This requires OneWire support using the ConfigurableFirmata
-  var temperature = new five.Temperature({
+  var temperatureA = new five.Temperature({
     controller: "DS18B20",
     address: 0x60598c0,
     pin: pin,
-    freq: 30000
+    freq: 1000
+  });
+
+  var temperatureB = new five.Temperature({
+    controller: "DS18B20",
+    pin: 2,
+    address: 0x60630e7,
+    freq: 1000
   });
 
   // Initialize the plotly graph
@@ -55,18 +77,31 @@ board.on('ready', function () {
     console.log(res);
     //Once it's initialized, create a plotly stream
     //to pipe your data!
-    var stream = plotly.stream('0om2z8lncl', function (err, res) {
+    var stream1 = plotly.stream('0om2z8lncl', function (err, res) {
       if (err) console.log(err);
       console.log(res);
     });
-    temperature.on("data", function(err, data) {
+    var stream2 = plotly.stream('wboncpxs1m', function (err, res) {
+      if (err) console.log(err);
+      console.log(res);
+    });
+    temperatureA.on("data", function(err, data) {
       if (err) console.log(err);
       var data = {
-        x : getDateString(),
-        y : data.fahrenheit
+        x1 : getDateString(),
+        y1 : data.fahrenheit
       };
       console.log(data);
-      stream.write(JSON.stringify(data)+'\n');
+      stream1.write(JSON.stringify(data)+'\n');
+    });
+    temperatureB.on("data", function(err, data) {
+      if (err) console.log(err);
+      var data = {
+        x2 : getDateString(),
+        y2 : data.fahrenheit
+      };
+      console.log(data);
+      stream2.write(JSON.stringify(data)+'\n');
     });
   }); // End Plotly
 }); // End board.on
