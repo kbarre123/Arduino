@@ -4,7 +4,6 @@ var config = require('./config.json')
   , token = config['token']
   , plotly = require('plotly')(username, apikey)
 
-//var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
 var five = require('johnny-five'), board
 var board = new five.Board();
 // the pin the DS18B20 is connected on
@@ -17,15 +16,6 @@ var data = [{
   name: 'Top',
   stream:{
     token:'0om2z8lncl', 
-    maxpoints: 200
-  }
-},
-{
-  x2:[], 
-  y2:[],
-  name: 'Bottom',
-  stream:{
-    token:'wboncpxs1m', 
     maxpoints: 200
   }
 }];
@@ -64,12 +54,12 @@ board.on('ready', function () {
     freq: 1000
   });
 
-  var temperatureB = new five.Temperature({
+  /*var temperatureB = new five.Temperature({
     controller: "DS18B20",
     pin: 2,
     address: 0x60630e7,
     freq: 1000
-  });
+  });*/
 
   // Initialize the plotly graph
   plotly.plot(data, graphOptions, function (err, res) {
@@ -81,10 +71,10 @@ board.on('ready', function () {
       if (err) console.log(err);
       console.log(res);
     });
-    var stream2 = plotly.stream('wboncpxs1m', function (err, res) {
+    /*var stream2 = plotly.stream('wboncpxs1m', function (err, res) {
       if (err) console.log(err);
       console.log(res);
-    });
+    });*/
     temperatureA.on("data", function(err, data) {
       if (err) console.log(err);
       var data = {
@@ -94,7 +84,7 @@ board.on('ready', function () {
       console.log(data);
       stream1.write(JSON.stringify(data)+'\n');
     });
-    temperatureB.on("data", function(err, data) {
+    /*temperatureB.on("data", function(err, data) {
       if (err) console.log(err);
       var data = {
         x2 : getDateString(),
@@ -102,7 +92,7 @@ board.on('ready', function () {
       };
       console.log(data);
       stream2.write(JSON.stringify(data)+'\n');
-    });
+    });*/
   }); // End Plotly
 }); // End board.on
 
