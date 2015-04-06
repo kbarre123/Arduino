@@ -11,11 +11,11 @@ var pin = 2;
 
 // Plotly Stuff
 var data = [{
-  x1:[], 
-  y1:[],
+  x:[], 
+  y:[],
   name: 'Top',
   stream:{
-    token:'0om2z8lncl', 
+    token: token, 
     maxpoints: 200
   }
 }];
@@ -67,7 +67,7 @@ board.on('ready', function () {
     console.log(res);
     //Once it's initialized, create a plotly stream
     //to pipe your data!
-    var stream1 = plotly.stream('0om2z8lncl', function (err, res) {
+    var stream1 = plotly.stream(token, function (err, res) {
       if (err) console.log(err);
       console.log(res);
     });
@@ -78,8 +78,8 @@ board.on('ready', function () {
     temperatureA.on("data", function(err, data) {
       if (err) console.log(err);
       var data = {
-        x1 : getDateString(),
-        y1 : data.fahrenheit
+        x : getDateString(),
+        y : data.fahrenheit
       };
       console.log(data);
       stream1.write(JSON.stringify(data)+'\n');
