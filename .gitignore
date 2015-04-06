@@ -1,3 +1,4 @@
 /brew_touch/ds18b20_sensor_*
 node_modules
 /fritzing_diagrams
+config.json
