@@ -6,8 +6,7 @@ var config = require('./config.json')
 
 var five = require('johnny-five'), board
 var board = new five.Board();
-// the pin the DS18B20 is connected on
-var pin = 2;
+var pin = 2; // the pin the DS18B20 is connected on
 
 // Plotly Stuff
 var data = [{
@@ -67,14 +66,11 @@ board.on('ready', function () {
     console.log(res);
     //Once it's initialized, create a plotly stream
     //to pipe your data!
-    var stream1 = plotly.stream(token, function (err, res) {
+    var stream = plotly.stream(token, function (err, res) {
       if (err) console.log(err);
       console.log(res);
     });
-    /*var stream2 = plotly.stream('wboncpxs1m', function (err, res) {
-      if (err) console.log(err);
-      console.log(res);
-    });*/
+    
     temperatureA.on("data", function(err, data) {
       if (err) console.log(err);
       var data = {
@@ -82,17 +78,8 @@ board.on('ready', function () {
         y : data.fahrenheit
       };
       console.log(data);
-      stream1.write(JSON.stringify(data)+'\n');
+      stream.write(JSON.stringify(data)+'\n');
     });
-    /*temperatureB.on("data", function(err, data) {
-      if (err) console.log(err);
-      var data = {
-        x2 : getDateString(),
-        y2 : data.fahrenheit
-      };
-      console.log(data);
-      stream2.write(JSON.stringify(data)+'\n');
-    });*/
   }); // End Plotly
 }); // End board.on
 
