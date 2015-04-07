@@ -1,4 +1,13 @@
-var plotly = require('plotly')('kbarre123', 'g5nzo225vi');
+/* Hardware config: flat side facing you:
+*	left-pin to 5V; middle to A0; right to Ground
+*/
+
+var config = require('./config.json')
+  , username = config['user']
+  , apikey = config['apikey']
+  , token = config['token']
+  , plotly = require('plotly')(username, apikey)
+
 var five = require("johnny-five");
 var board = new five.Board();
 
@@ -6,8 +15,8 @@ var data = [{
   x:[], 
   y:[], 
   stream:{
-    token:'wboncpxs1m', 
-    maxpoints:1800
+    token:token, 
+    maxpoints:2880
   }
 }];
 
@@ -18,7 +27,8 @@ var layout = {
   },
   yaxis: {
     title: "Temperature (*F)"
-  }
+  },
+  autosize: true
 };
 
 var graphOptions = {
@@ -32,7 +42,7 @@ board.on("ready", function() {
   // create a new tmp36 sensor object
   var tmp36 = new five.Sensor({
     pin: "A0",
-    freq: 1000, // get reading every 1000ms
+    freq: 15000, // get reading every 1000ms
     thresh: 0.5
   });
   
@@ -42,7 +52,7 @@ board.on("ready", function() {
     console.log(res);
     //once it's initialized, create a plotly stream
     //to pipe your data!
-    var stream = plotly.stream('wboncpxs1m', function (err, res) {
+    var stream = plotly.stream(token, function (err, res) {
       if (err) console.log(err);
       console.log(res);
     });
