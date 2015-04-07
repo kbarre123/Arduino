@@ -31,6 +31,14 @@ The Firmata library and examples included with the Arduino IDE needs to be repla
 
 `sudo apt-get install node`. If you're using a Debian-derived distribution, I'd recommend using the `node-legacy` package instead. Long story, just use it instead of `node`. It's the same thing, but less hassle. You'll also want to install Node's package manager: `sudo apt-get install npm`.
 
+### Johnny-Five
+
+`npm install johnny-five`. Also, check out this [issue](https://github.com/rwaldron/johnny-five/issues/285) regarding using multiple DS18B20 sensors. It doesn't seem to be resolved, but I'm moving forward and will hopefully figure out something.
+
+### Plotly
+
+`npm install plotly`. Easy as that. You'll have to create an account, at which time a login token and streaming token will be available under your profile page. You'll need these to stream your data to Plotly. 
+
 **Note:** I've included the `node_modules` folder in my `.gitignore` file to keep the repo size down. Your project folder should look *something* like this once everythings set up and ready to go:
 
     project_folder
@@ -41,20 +49,11 @@ The Firmata library and examples included with the Arduino IDE needs to be repla
     ├── README.md
     └── tmp_lm35.js
 
-
-### Johnny-Five
-
-`npm install johnny-five`. Also, check out this [issue](https://github.com/rwaldron/johnny-five/issues/285) regarding using multiple DS18B20 sensors. It doesn't seem to be resolved, but I'm moving forward and will hopefully figure out something.
-
-### Plotly
-
-`npm install plotly`. Easy as that. You'll have to create an account, at which time a login token and streaming token will be available under your profile page. You'll need these to stream your data to Plotly. 
-
 ## Program Details
 
 ### brew_temp.js
 
-There are two DS18B20 water-proof temperature sensors attached.
+*Update: 4/7/15* There are two DS18B20 water-proof temperature sensors attached. The ultimate goal is to have each sensor stream its data to a seperate data-stream in one graph on Plotly. It's a work in progress.
 
 ### tmp_lm35.js
 
@@ -63,4 +62,3 @@ The LM35 sensor is hooked up (with the flat side facing you):
 * left pin to 5V
 * middle pin to A0
 * right pin to Ground
-

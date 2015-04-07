@@ -1,7 +1,3 @@
-/* Hardware config: flat side facing you:
-*	left-pin to 5V; middle to A0; right to Ground
-*/
-
 var config = require('./config.json')
   , username = config['user']
   , apikey = config['apikey']
