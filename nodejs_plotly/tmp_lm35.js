@@ -19,7 +19,7 @@ var data = [{
 var layout = { 
   title: "Arduino Temp Stream (LM35)",
   xaxis: {
-    title: "Datetime " + getXAxisTime(data[0].stream.maxpoints)
+    title: "Datetime"
   },
   yaxis: {
     title: "Temperature (*F)"
@@ -29,7 +29,7 @@ var layout = {
 
 var graphOptions = {
   layout: layout,
-  fileopt: "overwrite", 
+  fileopt: "extend",
   filename : "Arduino Temp Stream (LM35)",
 };
 
@@ -38,7 +38,7 @@ board.on("ready", function() {
   // create a new tmp36 sensor object
   var tmp36 = new five.Sensor({
     pin: "A0",
-    freq: 15000, // get reading every 1000ms
+    freq: 15000, // get reading every 15 seconds
     thresh: 0.5
   });
   
@@ -80,17 +80,4 @@ function getDateString () {
   // for your timezone just multiply +/-GMT by 3600000
   var datestr = new Date(time - 18000000).toISOString().replace(/T/, ' ').replace(/Z/, '');
   return datestr;
-}
-
-function getXAxisTime(maxPoints) {
-  var time = 0;
-  var dateTime = "";
-  if (maxPoints > 3600) {
-    time = (maxPoints / 3600).toFixed(2);
-    dateTime = "(Past " + time + " Hours)";
-  } else {
-    time = (maxPoints / 60).toFixed(2);
-    dateTime = "(Past " + time + " Minutes)";
-  }
-  return dateTime;
 }
