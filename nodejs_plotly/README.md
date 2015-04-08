@@ -8,7 +8,7 @@
 
 Wire up the DS18B20 sensors to the Arduino according to this diagram.
 
-[DS18B20 Waterproof Sensor](http://i.imgur.com/sKhYbkM.jpg)
+[DS18B20 Sensor](https://github.com/rwaldron/johnny-five/wiki/Temperature)
 
 ## Software Setup
 
@@ -33,7 +33,7 @@ The Firmata library and examples included with the Arduino IDE needs to be repla
 
 ### Johnny-Five
 
-`npm install johnny-five`. Also, check out this [issue](https://github.com/rwaldron/johnny-five/issues/285) regarding using multiple DS18B20 sensors. It doesn't seem to be resolved, but I'm moving forward and will hopefully figure out something.
+`npm install johnny-five`. See `node_modules/johnny-five/eg/temperature-dual-ds18b20.js` for a basic program to get started.
 
 ### Plotly
 
